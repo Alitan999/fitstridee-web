@@ -31,17 +31,18 @@ de Android (`~/workspace/fitstridee/app/`).
   modo × días/semana (2–5) × nivel (principiante/intermedio/avanzado),
   con regla de progresión publicada (primero reps, luego peso) y 48 h entre
   sesiones del mismo músculo.
-- **Medir (nuevo v1.2):** pregunta “¿Cuál es tu peso actual?”, toggle
+- **Medir (v1.3, figuras nuevas):** pregunta “¿Cuál es tu peso actual?”, toggle
   kg/lb, número grande y **regla deslizante** (40–200 kg / 90–440 lb) que
-  guarda el peso de hoy; historial con gráfico; **figura corporal con 7
-  puntos numerados** (cuello, pecho, cintura, brazo, cadera, muslo,
+  guarda el peso de hoy; historial con gráfico; **figura corporal detallada
+  propia con 7 puntos numerados** (cuello, pecho, cintura, brazo, cadera, muslo,
   pantorrilla) que enfocan su campo de medida. Todo en `localStorage`:
   nada sale de tu teléfono.
 - **Seguir (nuevo v1.2):** calorías quemadas por semana y mapa de calor de
   4 semanas, **sin candado ni Premium** (chip “Sin candado” / “Gratis”).
-- **Diseño v3.2:** negro `#0B0B0B` + grafito `#1C1C1E` + blanco `#FFFFFF`, tipografías
+- **Diseño v3.3:** negro `#0B0B0B` + grafito `#1C1C1E` + blanco `#FFFFFF`, tipografías
   Anton / Archivo Black / Inter (locales, sin CDN) y logo F Garra v3. Layout
-  de las capturas de referencia de Drive (estructura, no assets).
+  de las capturas de referencia de Drive (estructura, no assets) y figuras
+  corporales detalladas propias (fuente: `design/assets/figures.py`).
 
 ## Archivos
 

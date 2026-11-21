@@ -323,52 +323,46 @@ function routineCard(r, showStart) {
     '</button>';
 }
 
-/* ---------------- Mapa corporal (dibujo propio, esquemático) ---------------- */
+/* ---------------- Mapa corporal v3.3 (figuras propias, anatómicas) ---------------- */
+/* Formas en design/assets/figures.py (fuente única); aquí van incrustadas. */
 const _BM_FILL = (key, worked, secondary) => worked.has(key) ? '#FFFFFF' : (secondary.has(key) ? '#6E6E73' : '#2C2C2E');
-function bodyFigure(back, worked, secondary) {
-  const base = '<circle cx="100" cy="24" r="17" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<rect x="92" y="40" width="16" height="16" rx="4" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<path d="M64 58 L136 58 L131 152 Q129 170 100 170 Q71 170 69 152 Z" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<rect x="44" y="60" width="18" height="100" rx="9" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<rect x="138" y="60" width="18" height="100" rx="9" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<rect x="76" y="170" width="20" height="132" rx="10" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<rect x="104" y="170" width="20" height="132" rx="10" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<circle cx="86" cy="352" r="9" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>' +
-    '<circle cx="114" cy="352" r="9" fill="#2C2C2E" stroke="#55565A" stroke-width="2"/>';
-  const parts = !back ? [
-    ['delts', '<circle cx="60" cy="66" r="15" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['delts', '<circle cx="140" cy="66" r="15" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['pecs', '<rect x="72" y="72" width="26" height="34" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['pecs', '<rect x="102" y="72" width="26" height="34" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['biceps', '<rect x="44" y="86" width="15" height="36" rx="7" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['biceps', '<rect x="141" y="86" width="15" height="36" rx="7" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['abs', '<rect x="84" y="108" width="14" height="14" rx="4" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['abs', '<rect x="102" y="108" width="14" height="14" rx="4" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['abs', '<rect x="84" y="126" width="14" height="14" rx="4" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['abs', '<rect x="102" y="126" width="14" height="14" rx="4" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['abs', '<rect x="84" y="144" width="14" height="14" rx="4" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['abs', '<rect x="102" y="144" width="14" height="14" rx="4" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['forearms', '<rect x="44" y="128" width="15" height="28" rx="7" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['forearms', '<rect x="141" y="128" width="15" height="28" rx="7" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['quads', '<rect x="76" y="180" width="20" height="58" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['quads', '<rect x="104" y="180" width="20" height="58" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['calves', '<rect x="78" y="300" width="16" height="44" rx="8" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['calves', '<rect x="106" y="300" width="16" height="44" rx="8" fill="__F__" stroke="#55565A" stroke-width="2"/>']
-  ] : [
-    ['traps', '<polygon points="78,58 122,58 108,94 92,94" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['lats', '<rect x="70" y="92" width="28" height="60" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['lats', '<rect x="102" y="92" width="28" height="60" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['triceps', '<rect x="44" y="86" width="15" height="36" rx="7" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['triceps', '<rect x="141" y="86" width="15" height="36" rx="7" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['glutes', '<rect x="76" y="152" width="22" height="30" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['glutes', '<rect x="102" y="152" width="22" height="30" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['hams', '<rect x="76" y="188" width="20" height="52" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['hams', '<rect x="104" y="188" width="20" height="52" rx="10" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['calves', '<rect x="78" y="300" width="16" height="44" rx="8" fill="__F__" stroke="#55565A" stroke-width="2"/>'],
-    ['calves', '<rect x="106" y="300" width="16" height="44" rx="8" fill="__F__" stroke="#55565A" stroke-width="2"/>']
+const _BM_MIRROR = el => '<g transform="translate(200,0) scale(-1,1)">' + el + '</g>';
+const _BM_BASE = '<circle cx="100" cy="23" r="16" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M93,36 L107,36 L109,52 L91,52 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M64,56 L136,56 L132,118 C130,142 126,156 121,166 L79,166 C74,156 70,142 68,118 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M48,60 C43,72 42,98 45,118 C47,128 53,128 55,120 L57,92 C58,78 58,68 57,60 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M45,124 C43,136 43,150 46,158 C48,164 54,163 55,156 L56,130 C56,124 50,120 45,124 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><ellipse cx="50" cy="170" rx="6" ry="9" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M75,166 L97,166 L95,246 C94,258 88,260 84,252 L78,200 C76,186 75,174 75,166 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><circle cx="86" cy="258" r="7" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M79,258 C76,274 76,302 80,320 C83,330 89,329 90,318 L90,266 C90,258 83,256 79,258 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><rect x="81" y="326" width="10" height="18" rx="4" fill="__BF__" stroke="__BS__" stroke-width="2"/><ellipse cx="86" cy="350" rx="10" ry="8" fill="__BF__" stroke="__BS__" stroke-width="2"/><g transform="translate(200,0) scale(-1,1)"><path d="M48,60 C43,72 42,98 45,118 C47,128 53,128 55,120 L57,92 C58,78 58,68 57,60 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M45,124 C43,136 43,150 46,158 C48,164 54,163 55,156 L56,130 C56,124 50,120 45,124 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><ellipse cx="50" cy="170" rx="6" ry="9" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M75,166 L97,166 L95,246 C94,258 88,260 84,252 L78,200 C76,186 75,174 75,166 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><circle cx="86" cy="258" r="7" fill="__BF__" stroke="__BS__" stroke-width="2"/><path d="M79,258 C76,274 76,302 80,320 C83,330 89,329 90,318 L90,266 C90,258 83,256 79,258 Z" fill="__BF__" stroke="__BS__" stroke-width="2"/><rect x="81" y="326" width="10" height="18" rx="4" fill="__BF__" stroke="__BS__" stroke-width="2"/><ellipse cx="86" cy="350" rx="10" ry="8" fill="__BF__" stroke="__BS__" stroke-width="2"/></g>'.replaceAll('__BF__', '#2C2C2E').replaceAll('__BS__', '#55565A');
+const _BM_FRONT = [
+    ['delts', '<path d="M62,55 C50,57 43,67 44,79 C45,89 51,95 59,94 C65,93 68,85 67,75 C66,66 66,59 62,55 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['pecs', '<path d="M70,63 C78,58 90,58 98,62 L98,84 C98,93 93,99 85,98 C75,97 68,89 68,78 C68,72 68,67 70,63 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['biceps', '<path d="M46,83 C42,91 42,107 45,119 C47,127 53,128 55,121 L55,93 C55,85 50,80 46,83 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['abs', '<path d="M85,107 L96,107 Q98,107 98,110 L98,119 Q98,122 95,122 L86,122 Q83,122 83,119 L83,110 Q83,107 85,107 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['abs', '<path d="M85,125 L96,125 Q98,125 98,128 L98,137 Q98,140 95,140 L86,140 Q83,140 83,137 L83,128 Q83,125 85,125 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['abs', '<path d="M86,143 L95,143 Q97,143 97,146 L97,155 Q97,158 94,158 L87,158 Q84,158 84,155 L84,146 Q84,143 86,143 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['abs', '<path d="M68,109 C72,119 72,137 68,151 C66,157 70,159 73,153 L76,119 C77,111 72,105 68,109 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['forearms', '<path d="M46,125 C43,135 43,149 46,157 C48,163 54,162 55,155 L55,131 C55,125 49,121 46,125 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['quads', '<path d="M77,178 C71,192 70,222 75,244 C78,254 87,254 89,244 L90,194 C90,182 84,174 77,178 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['quads', '<path d="M91,180 C89,192 89,222 91,242 C93,250 99,248 99,236 L99,192 C99,183 95,178 91,180 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['calves', '<path d="M79,262 C75,278 75,304 79,318 C82,328 88,327 89,316 L89,270 C89,262 83,260 79,262 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['calves', '<path d="M91,264 C89,278 89,302 91,314 C93,322 98,320 98,310 L98,272 C98,264 94,261 91,264 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true]
   ];
-  const muscles = parts.map(([k, el]) => el.replace('__F__', _BM_FILL(k, worked, secondary))).join('');
-  return '<svg viewBox="0 0 200 368" fill="none" role="img" aria-label="' + (back ? 'Espalda' : 'Frente') + '">' + base + muscles + '</svg>';
+const _BM_BACK = [
+    ['traps', '<path d="M88,52 L112,52 L108,72 C105,88 102,98 100,102 C98,98 95,88 92,72 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', false],
+    ['delts', '<path d="M62,59 C50,61 43,71 44,83 C45,93 51,99 59,98 C65,97 68,89 67,79 C66,70 66,63 62,59 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['triceps', '<path d="M46,83 C42,93 42,109 45,121 C47,129 53,128 55,120 L55,93 C55,85 50,80 46,83 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['lats', '<path d="M70,86 C78,82 90,82 97,86 L97,118 C97,134 92,146 84,148 C76,146 70,134 69,116 C68,104 68,94 70,86 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['erectors', '<rect x="94" y="150" width="5" height="16" rx="2" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['forearms', '<path d="M46,125 C43,135 43,149 46,157 C48,163 54,162 55,155 L55,131 C55,125 49,121 46,125 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['glutes', '<path d="M78,152 C73,160 73,174 78,183 C82,189 90,189 93,183 L94,160 C94,152 84,148 78,152 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['hams', '<path d="M78,186 C74,200 74,226 78,244 C81,252 88,251 89,240 L89,196 C89,186 83,182 78,186 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['hams', '<path d="M92,188 C89,200 89,224 92,242 C94,248 99,246 99,236 L99,196 C99,188 96,185 92,188 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['calves', '<path d="M79,262 C75,278 75,304 79,318 C82,328 88,327 89,316 L89,270 C89,262 83,260 79,262 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true],
+    ['calves', '<path d="M91,264 C89,278 89,302 91,314 C93,322 98,320 98,310 L98,272 C98,264 94,261 91,264 Z" fill="__FILL__" stroke="__STROKE__" stroke-width="2"/>', true]
+  ];
+function bodyFigure(back, worked, secondary) {
+  const parts = back ? _BM_BACK : _BM_FRONT;
+  const muscles = parts.map(([k, el, sym]) => { const e = el.replace('__FILL__', _BM_FILL(k, worked, secondary)).replace('__STROKE__', '#55565A'); return e + (sym ? _BM_MIRROR(e) : ''); }).join('');
+  return '<svg viewBox="0 0 200 368" fill="none" role="img" aria-label="' + (back ? 'Espalda' : 'Frente') + '">' + _BM_BASE + muscles + '</svg>';
+}
+/* Figura de Medir: ilustración frontal detallada (los puntos 1-7 son botones HTML encima). */
+function measureFigure() {
+  return `<svg viewBox="0 0 200 368" fill="none" role="img" aria-label="Figura de medida"><path d="M87,18 C87,7 93,3 100,3 C107,3 113,7 113,18 C113,30 108,37 100,37 C92,37 87,30 87,18 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><ellipse cx="86" cy="20" rx="2.5" ry="4.5" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="1.5"/><ellipse cx="114" cy="20" rx="2.5" ry="4.5" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="1.5"/><path d="M86,17 C84,4 92,0 100,0 C108,0 116,4 114,17 C112,11 110,8 106,8 L104,12 C101,8 97,8 94,12 C90,9 88,12 86,17 Z" fill="#0B0B0B"/><path d="M90,21 Q93,19 96,21 M104,21 Q107,19 110,21" fill="none" stroke="#0B0B0B" stroke-width="1.6" stroke-linecap="round"/><path d="M100,23 L99,28" fill="none" stroke="#0B0B0B" stroke-width="1.5" stroke-linecap="round"/><path d="M96,31 Q100,33 104,31" fill="none" stroke="#0B0B0B" stroke-width="1.6" stroke-linecap="round"/><path d="M87,22 L87,29 C88,37 93,43 100,43 C107,43 112,37 113,29 L113,22 C112,29 110,34 106,36 L106,33 C103,35 97,35 94,33 L94,36 C90,34 88,29 87,22 Z" fill="#0B0B0B"/><path d="M93,38 L107,38 L109,52 L91,52 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M91,52 L78,58 M109,52 L122,58" fill="none" stroke="#0B0B0B" stroke-width="1.5" stroke-linecap="round"/><path d="M64,58 C72,51 84,49 92,50 L108,50 C116,49 128,51 136,58 C138,72 136,90 133,106 C130,126 126,144 122,156 L78,156 C74,144 70,126 67,106 C64,90 62,72 64,58 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M70,66 C78,61 90,61 98,65 M102,65 C110,61 122,61 130,66" fill="none" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round"/><path d="M71,82 C76,92 84,96 93,94 M129,82 C124,92 116,96 107,94" fill="none" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round"/><circle cx="81" cy="84" r="1.6" fill="#0B0B0B"/><circle cx="119" cy="84" r="1.6" fill="#0B0B0B"/><path d="M100,60 L100,102 M83,112 Q100,116 117,112 M83,126 Q100,130 117,126 M84,140 Q100,144 116,140" fill="none" stroke="#0B0B0B" stroke-width="1.4" stroke-linecap="round"/><ellipse cx="100" cy="149" rx="2" ry="3" fill="#0B0B0B"/><path d="M70,108 C73,122 73,138 70,150 M130,108 C127,122 127,138 130,150" fill="none" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"/><path d="M64,58 C56,62 50,74 49,90 L48,120 C48,130 54,132 56,124 L58,96 C59,82 60,70 62,60 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M48,124 C46,136 46,150 48,158 C50,164 55,163 56,156 L57,130" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M48,158 C46,166 46,174 49,179 C52,183 57,182 57,176 L57,160" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M50,168 L54,168 M50,173 L54,173" stroke="#0B0B0B" stroke-width="1.2" stroke-linecap="round"/><path d="M56,96 C58,104 58,112 56,120" fill="none" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"/><path d="M136,58 C144,62 150,74 151,90 L152,120 C152,130 146,132 144,124 L142,96 C141,82 140,70 138,60 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M152,124 C154,136 154,150 152,158 C150,164 145,163 144,156 L143,130" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M152,158 C154,166 154,174 151,179 C148,183 143,182 143,176 L143,160" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M146,168 L150,168 M146,173 L150,173" stroke="#0B0B0B" stroke-width="1.2" stroke-linecap="round"/><path d="M144,96 C142,104 142,112 144,120" fill="none" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"/><path d="M76,154 L124,154 L128,182 C128,188 122,190 116,190 L104,190 L100,174 L96,190 L84,190 C78,190 72,188 72,182 Z" fill="#2C2C2E" stroke="#0B0B0B" stroke-width="2"/><path d="M74,159 L126,159" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="5 4"/><path d="M76,162 L74,186 M124,162 L126,186" stroke="#55565A" stroke-width="1.2"/><path d="M75,188 L97,188 L95,246 C94,258 88,260 84,252 L78,204 C76,194 75,190 75,188 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M125,188 L103,188 L105,246 C106,258 112,260 116,252 L122,204 C124,194 125,190 125,188 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M86,196 C88,212 88,228 86,242 M114,196 C112,212 112,228 114,242" fill="none" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"/><circle cx="86" cy="258" r="6" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="1.5"/><circle cx="114" cy="258" r="6" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="1.5"/><path d="M79,258 C76,274 76,302 80,320 C83,330 89,329 90,318 L90,266 C90,258 83,256 79,258 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><rect x="81" y="326" width="10" height="18" rx="4" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M121,258 C124,274 124,302 120,320 C117,330 111,329 110,318 L110,266 C110,258 117,256 121,258 Z" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><rect x="109" y="326" width="10" height="18" rx="4" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M84,272 C86,288 86,304 84,318 M116,272 C114,288 114,304 116,318" fill="none" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"/><ellipse cx="86" cy="350" rx="10" ry="8" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><ellipse cx="114" cy="350" rx="10" ry="8" fill="#E8E8E8" stroke="#0B0B0B" stroke-width="2"/><path d="M80,348 L92,348 M108,348 L120,348" stroke="#0B0B0B" stroke-width="1.3" stroke-linecap="round"/></svg>`;
 }
 const TARGET_MUSCLE = {
   pectorals: ['pecs', 'front'], delts: ['delts', 'front'], biceps: ['biceps', 'front'],
@@ -376,7 +370,7 @@ const TARGET_MUSCLE = {
   glutes: ['glutes', 'back'], hamstrings: ['hams', 'back'], lats: ['lats', 'back'],
   'upper back': ['lats', 'back'], traps: ['traps', 'back'], calves: ['calves', 'both'],
   forearms: ['forearms', 'front'], adductors: ['quads', 'front'], abductors: ['quads', 'front'],
-  spine: ['lats', 'back'], 'serratus anterior': ['abs', 'front'], 'levator scapulae': ['traps', 'back']
+  spine: ['erectors', 'back'], 'serratus anterior': ['abs', 'front'], 'levator scapulae': ['traps', 'back']
 };
 function musclesForRoutine(r) {
   const front = new Set(), back = new Set(), frontSec = new Set(), backSec = new Set();
@@ -883,7 +877,7 @@ function renderMeasure() {
   document.getElementById('weight-history').innerHTML = weights.slice().reverse().slice(0, 12).map(x =>
     '<div class="card" style="padding:12px 16px;"><div class="spread"><span>' + esc(x.date) + '</span><b>' + x.weight.toFixed(1) + ' kg</b></div></div>').join('') || '<p class="muted">Sin registros.</p>';
   document.getElementById('measure-fig').innerHTML =
-    bodyFigure(false, new Set(), new Set()) +
+    measureFigure() +
     MEASURE_FIELDS.map((f, idx) => '<button class="dot" style="top:' + f.top + ';left:' + f.left + '" onclick="focusMeasure(\'' + f.key + '\')" title="' + f.label + '">' + (idx + 1) + '</button>').join('');
   document.getElementById('measure-fields').innerHTML = MEASURE_FIELDS.map((f, idx) =>
     '<div class="field"><label>' + (idx + 1) + '. ' + f.label + ' (cm)</label><input id="m-' + f.key + '" type="number" step="0.5" placeholder="—" value="' + (measures && measures[f.key] ? esc(measures[f.key]) : '') + '"></div>').join('');
