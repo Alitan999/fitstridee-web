@@ -1,0 +1,1402 @@
+[
+  {
+    "id": "0662",
+    "name_es": "Flexiones",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0493",
+    "name_es": "Flexiones inclinadas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0279",
+    "name_es": "Flexiones declinadas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3211",
+    "name_es": "Flexiones de rodillas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1311",
+    "name_es": "Flexiones con manos separadas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0251",
+    "name_es": "Fondos de pecho",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3294",
+    "name_es": "Flexiones arquero",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0659",
+    "name_es": "Flexiones en pared",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0699",
+    "name_es": "Flexiones con toque de hombro",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3216",
+    "name_es": "Flexiones con toque de pecho",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0725",
+    "name_es": "Flexiones a un brazo",
+    "sets": 3,
+    "reps": "6-8",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0289",
+    "name_es": "Press de banca con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0314",
+    "name_es": "Press inclinado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0301",
+    "name_es": "Press declinado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0308",
+    "name_es": "Aperturas con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0319",
+    "name_es": "Aperturas inclinadas con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0302",
+    "name_es": "Aperturas declinadas con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0375",
+    "name_es": "Pullover con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0433",
+    "name_es": "Pullover con brazos rectos",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1289",
+    "name_es": "Press inclinado a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0324",
+    "name_es": "Press inclinado con agarre neutro",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0340",
+    "name_es": "Press tumbado con agarre martillo",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0025",
+    "name_es": "Press de banca con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0227",
+    "name_es": "Aperturas en polea de pie",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0292",
+    "name_es": "Remo a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0499",
+    "name_es": "Remo invertido",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2300",
+    "name_es": "Remo invertido con rodillas flexionadas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2298",
+    "name_es": "Remo invertido en banco",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3166",
+    "name_es": "Remo de pie con peso corporal",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3162",
+    "name_es": "Remo a un brazo de pie con peso corporal",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0808",
+    "name_es": "Remo en suspensión",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0293",
+    "name_es": "Remo inclinado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0327",
+    "name_es": "Remo inclinado en banco con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1331",
+    "name_es": "Remo a dos brazos en banco inclinado con agarre inverso",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1328",
+    "name_es": "Remo posterior tumbado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0027",
+    "name_es": "Remo inclinado con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "3017",
+    "name_es": "Remo Pendlay con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0049",
+    "name_es": "Remo inclinado en banco con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0652",
+    "name_es": "Dominadas",
+    "sets": 3,
+    "reps": "5-8",
+    "rest_seconds": 90
+  },
+  {
+    "id": "1326",
+    "name_es": "Dominadas con agarre supino",
+    "sets": 3,
+    "reps": "5-8",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0651",
+    "name_es": "Dominadas con agarre neutro",
+    "sets": 3,
+    "reps": "5-8",
+    "rest_seconds": 90
+  },
+  {
+    "id": "1429",
+    "name_es": "Dominadas con agarre amplio",
+    "sets": 3,
+    "reps": "5-8",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0674",
+    "name_es": "Dominadas con agarre inverso",
+    "sets": 3,
+    "reps": "5-8",
+    "rest_seconds": 90
+  },
+  {
+    "id": "1327",
+    "name_es": "Dominadas supinas con agarre cerrado",
+    "sets": 3,
+    "reps": "5-8",
+    "rest_seconds": 90
+  },
+  {
+    "id": "3019",
+    "name_es": "Dominadas en banco",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0198",
+    "name_es": "Jalón en polea",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0150",
+    "name_es": "Jalón al pecho con barra en polea",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0238",
+    "name_es": "Jalón con brazos rectos en polea",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0213",
+    "name_es": "Remo sentado alto con barra V en polea",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3563",
+    "name_es": "Jalón a un brazo en polea",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0406",
+    "name_es": "Encogimiento de hombros con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0305",
+    "name_es": "Encogimiento declinado con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0688",
+    "name_es": "Dominada escapular",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3012",
+    "name_es": "Fondos escapulares",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1760",
+    "name_es": "Sentadilla goblet con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0410",
+    "name_es": "Sentadilla búlgara con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0413",
+    "name_es": "Sentadilla con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0431",
+    "name_es": "Subida al cajón con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2796",
+    "name_es": "Zancada con subida al cajón con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2812",
+    "name_es": "Sentadilla búlgara con subida al cajón",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0291",
+    "name_es": "Sentadilla en banco con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2803",
+    "name_es": "Sentadilla asistida con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2368",
+    "name_es": "Sentadillas búlgaras con peso corporal",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1489",
+    "name_es": "Sentadilla sissy",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0026",
+    "name_es": "Sentadilla en banco con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0124",
+    "name_es": "Sentadilla amplia con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "0068",
+    "name_es": "Sentadilla a una pierna con barra",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 90
+  },
+  {
+    "id": "1685",
+    "name_es": "Sentadilla con alcance por encima de la cabeza",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0336",
+    "name_es": "Zancadas con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0300",
+    "name_es": "Peso muerto con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1459",
+    "name_es": "Peso muerto rumano con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1757",
+    "name_es": "Peso muerto a una pierna con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0381",
+    "name_es": "Zancada hacia atrás con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3635",
+    "name_es": "Zancada frontal contralateral con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0411",
+    "name_es": "Sentadilla a una pierna con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0432",
+    "name_es": "Peso muerto con piernas rígidas con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1460",
+    "name_es": "Zancada caminando",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3470",
+    "name_es": "Zancada frontal",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3013",
+    "name_es": "Puente de glúteo bajo en el suelo",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3561",
+    "name_es": "Puente de glúteo con marcha",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3523",
+    "name_es": "Puente de glúteo con piernas en banco",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3769",
+    "name_es": "Sentadilla de reverencia",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0339",
+    "name_es": "Curl femoral tumbado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0496",
+    "name_es": "Curl de piernas inverso con apoyo en banco",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0696",
+    "name_es": "Curl de piernas inverso asistido en el suelo",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0795",
+    "name_es": "Curl de piernas a una pierna de pie",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0730",
+    "name_es": "Deslizamiento a una pierna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3193",
+    "name_es": "Elevación glúteo-isquiotibial",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2400",
+    "name_es": "Curl de piernas inverso en máquina",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0044",
+    "name_es": "Buenos días con barra",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0116",
+    "name_es": "Peso muerto con piernas rectas con barra",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3235",
+    "name_es": "Curl de piernas inverso asistido en polea",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0168",
+    "name_es": "Aducción de cadera en polea",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1775",
+    "name_es": "Plancha lateral con aducción de cadera",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0710",
+    "name_es": "Abducción de cadera lateral",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1774",
+    "name_es": "Puente lateral con abducción de cadera",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0405",
+    "name_es": "Press de hombro con mancuernas sentado",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0361",
+    "name_es": "Press de hombro a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "2137",
+    "name_es": "Press Arnold con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0334",
+    "name_es": "Elevación lateral con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0310",
+    "name_es": "Elevación frontal con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0378",
+    "name_es": "Apertura posterior con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0383",
+    "name_es": "Apertura inversa con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0437",
+    "name_es": "Remo al mentón con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0363",
+    "name_es": "Remo al mentón a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1700",
+    "name_es": "Push press con mancuernas",
+    "sets": 3,
+    "reps": "8-10",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0299",
+    "name_es": "Press cubano con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0380",
+    "name_es": "Elevación lateral posterior con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0355",
+    "name_es": "Elevación lateral a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0325",
+    "name_es": "Elevación inclinada con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0387",
+    "name_es": "Elevación frontal alternada sentado con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0286",
+    "name_es": "Press lateral alternado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0392",
+    "name_es": "Elevación frontal sentado con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0290",
+    "name_es": "Press sentado en banco con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0335",
+    "name_es": "Elevación lateral a frontal con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "2292",
+    "name_es": "Elevación de deltoides posterior con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0376",
+    "name_es": "Elevación con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "2397",
+    "name_es": "Press Scott con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0323",
+    "name_es": "Elevación lateral inclinada a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0438",
+    "name_es": "Press en W con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0294",
+    "name_es": "Curl de bíceps con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0285",
+    "name_es": "Curl alternado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0313",
+    "name_es": "Curl martillo con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0297",
+    "name_es": "Curl concentrado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0315",
+    "name_es": "Curl inclinado de bíceps con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0320",
+    "name_es": "Curl martillo inclinado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0298",
+    "name_es": "Curl martillo cruzado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0372",
+    "name_es": "Curl en banco Scott con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0318",
+    "name_es": "Curl inclinado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0391",
+    "name_es": "Curl sentado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1677",
+    "name_es": "Curl de bíceps sentado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1654",
+    "name_es": "Curl inverso con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0439",
+    "name_es": "Curl Zottman con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0416",
+    "name_es": "Curl de bíceps de pie con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0140",
+    "name_es": "Dominada de bíceps",
+    "sets": 3,
+    "reps": "6-8",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1664",
+    "name_es": "Curl alto con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0813",
+    "name_es": "Fondos entre bancos",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0129",
+    "name_es": "Fondos en banco con rodillas flexionadas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0259",
+    "name_es": "Flexiones con agarre cerrado",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0283",
+    "name_es": "Flexiones diamante",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0814",
+    "name_es": "Fondos de tríceps",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0672",
+    "name_es": "Fondos invertidos",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1399",
+    "name_es": "Fondos en banco en el suelo",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0333",
+    "name_es": "Patada atrás con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0351",
+    "name_es": "Extensión de tríceps tumbado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0354",
+    "name_es": "Patada atrás a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0362",
+    "name_es": "Extensión de tríceps a un brazo en banco",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0306",
+    "name_es": "Extensión de tríceps declinada con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0330",
+    "name_es": "Extensión de tríceps inclinada con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0389",
+    "name_es": "Extensión de tríceps sentado en banco",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "1733",
+    "name_es": "Extensión a dos brazos inclinada con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0296",
+    "name_es": "Press con agarre cerrado con mancuernas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0464",
+    "name_es": "Plancha frontal con giro",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0001",
+    "name_es": "Abdominal 3/4",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0274",
+    "name_es": "Crunch en el suelo",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0262",
+    "name_es": "Crunch cruzado",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0267",
+    "name_es": "Crunch con manos por encima de la cabeza",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0277",
+    "name_es": "Crunch declinado",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0282",
+    "name_es": "Abdominal declinado",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0872",
+    "name_es": "Crunch inverso",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0687",
+    "name_es": "Giro ruso",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0620",
+    "name_es": "Elevación de piernas en banco",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0472",
+    "name_es": "Elevación de piernas colgado",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0475",
+    "name_es": "Elevación de piernas rectas colgado",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0689",
+    "name_es": "Elevación de piernas sentado",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0006",
+    "name_es": "Toques de talón alternados",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0276",
+    "name_es": "Bicho muerto",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0507",
+    "name_es": "Abdominal navaja",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0630",
+    "name_es": "Escalador",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3544",
+    "name_es": "Plancha lateral inclinada",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3663",
+    "name_es": "Plancha invertida con elevación de pierna",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3239",
+    "name_es": "Plancha de rodillas con toque de hombro",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1495",
+    "name_es": "Crunch oblicuo",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0635",
+    "name_es": "Crunch oblicuo en el suelo",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0871",
+    "name_es": "Crunch recogido",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "3640",
+    "name_es": "Crunch con toque de rodilla",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0826",
+    "name_es": "Elevación vertical de piernas en paralelas",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1764",
+    "name_es": "Elevación de cadera colgado",
+    "sets": 3,
+    "reps": "10-12",
+    "rest_seconds": 45
+  },
+  {
+    "id": "2802",
+    "name_es": "Elevación de piernas con giro",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0407",
+    "name_es": "Flexión lateral con mancuerna",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1373",
+    "name_es": "Elevación de talones de pie",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0284",
+    "name_es": "Elevación de talones tipo burro",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1386",
+    "name_es": "Elevación de talones a una pierna tipo burro",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1387",
+    "name_es": "Elevación de talones a una pierna en el suelo",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1490",
+    "name_es": "Elevación de talones de pie en escalera",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0417",
+    "name_es": "Elevación de talones de pie con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1379",
+    "name_es": "Elevación de talones sentado con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0409",
+    "name_es": "Elevación de talones a una pierna con mancuerna",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0369",
+    "name_es": "Curl de muñeca sobre banco con mancuerna",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0385",
+    "name_es": "Curl de muñeca inverso con mancuernas",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0364",
+    "name_es": "Curl de muñeca a un brazo con mancuerna",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0401",
+    "name_es": "Curl de muñeca sentado con palmas arriba",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0126",
+    "name_es": "Curl de muñeca con barra",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0082",
+    "name_es": "Curl de muñeca inverso con barra",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "1160",
+    "name_es": "Burpee",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3360",
+    "name_es": "Gateo de oso",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3361",
+    "name_es": "Saltos de patinador",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 60
+  },
+  {
+    "id": "3223",
+    "name_es": "Salto estrella",
+    "sets": 3,
+    "reps": "30s",
+    "rest_seconds": 60
+  },
+  {
+    "id": "0489",
+    "name_es": "Hiperextensión",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  },
+  {
+    "id": "0488",
+    "name_es": "Hiperextensión en banco",
+    "sets": 3,
+    "reps": "12-15",
+    "rest_seconds": 45
+  }
+]
