@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FitStridee — Rutinas de gym, casa y calistenia</title>
+<meta name="description" content="FitStridee: rutinas de gym, en casa y calistenia. 1.324 ejercicios con GIF, generador por reglas, sesiones y medición. Gratis, sin cuenta, sin anuncios.">
+<meta name="theme-color" content="#0B0B0B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="assets/app-icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="splash">
+  <img class="logo" src="assets/logo-symbol.svg" alt="FitStridee">
+  <img class="word" src="assets/wordmark-white.svg" alt="FitStridee">
+  <p>Entrena sin límites</p>
+  <div class="bar"><i></i></div>
+</div>
+
+<header class="top">
+  <div class="app" style="padding-bottom:0;max-width:560px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
+    <div class="brand">
+      <img src="assets/logo-symbol.svg" alt="FitStridee">
+      <b>FIT<span>STRIDEE</span></b>
+    </div>
+    <span class="pill-free">100% gratis</span>
+  </div>
+</header>
+
+<main class="app">
+
+  <!-- ============ SEGUIR / INICIO ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <span class="tag">Recomposición · bajar grasa + ganar músculo</span>
+      <h1 class="display">Entrena<br><span class="volt">sin</span> <span class="volt">límites.</span></h1>
+      <p class="lead">Hola, <b>Alan</b>. Hoy toca lo que tú elijas: <b>gym</b>, <b>casa</b> o <b>calistenia</b>. Sin cuenta, sin anuncios, sin pagar por ver tus propios datos.</p>
+      <div class="stat-grid">
+        <div class="stat"><b class="volt" id="stat-sessions">0</b><span>sesiones</span></div>
+        <div class="stat"><b id="stat-streak">0</b><span>días seguidos</span></div>
+        <div class="stat"><b id="stat-weight">85.0</b><span>kg actual</span></div>
+      </div>
+    </div>
+
+    <div class="spread">
+      <h2 class="sec" style="margin:0;border:0;">Tu modo</h2>
+      <button class="btn ghost sm" onclick="go('train')">Cambiar →</button>
+    </div>
+    <div class="card mt" id="home-mode-card"></div>
+
+    <h2 class="sec">Hoy te toca</h2>
+    <div id="home-next"></div>
+
+    <h2 class="sec">Últimos 7 días</h2>
+    <div class="card"><div class="bars" id="week-bars"></div>
+      <p class="small muted mt" id="week-note"></p>
+    </div>
+
+    <h2 class="sec">Calorías y constancia</h2>
+    <div class="card" id="home-calories"></div>
+    <div class="card" id="home-heat"></div>
+
+    <h2 class="sec">Progresión automática</h2>
+    <div class="card" id="home-progression"></div>
+
+    <button class="btn block big" onclick="openGenerator()">⚡ Generar mi semana</button>
+    <p class="small dim mt" style="text-align:center;">Generador por reglas, en tu teléfono. Nada se sube a ningún servidor.</p>
+  </section>
+
+  <!-- ============ ENTRENAR ============ -->
+  <section class="view" id="view-train">
+    <h1 class="display">Elige tu<br><span class="volt">terreno.</span></h1>
+    <p class="lead">Tres modos, un mismo objetivo. Cambia de modo cuando quieras: tus rutinas y tu historial se quedan.</p>
+
+    <div class="mode-grid" id="mode-grid"></div>
+
+    <div id="mode-info" class="mt"></div>
+
+    <h2 class="sec">Rutinas de <span id="train-mode-name">casa</span></h2>
+    <div id="routine-list"></div>
+
+    <h2 class="sec">¿No sabes por dónde empezar?</h2>
+    <div class="card">
+      <h3>La rutina de Alan — casa mixta</h3>
+      <p class="muted small mt">Calistenia + 2 mancuernas de 7 kg, cuerpo completo en una sesión. La que se hace en casa, sin máquinas.</p>
+      <button class="btn block mt" onclick="openRoutine('casa-mixta')">Empezar casa mixta →</button>
+    </div>
+  </section>
+
+  <!-- ============ RUTINA (detalle estilo referencia) ============ -->
+  <section class="view" id="view-routine">
+    <div id="routine-body"></div>
+  </section>
+
+  <!-- ============ EJERCICIOS ============ -->
+  <section class="view" id="view-explore">
+    <h1 class="display">1.324<br><span class="volt">ejercicios.</span></h1>
+    <p class="lead">Busca por nombre, filtra por músculo o equipo. Los GIF se cargan bajo demanda desde el dataset.</p>
+    <div class="searchbar">
+      <input id="search" type="search" placeholder="Buscar: flexiones, remo, sentadilla…" autocomplete="off">
+    </div>
+    <div class="chips" id="filter-muscle"></div>
+    <div class="chips" id="filter-equip"></div>
+    <p class="small muted mb" id="explore-count"></p>
+    <div id="exercise-list"></div>
+    <button class="btn ghost block" id="load-more" onclick="loadMore()">Ver más ejercicios</button>
+  </section>
+
+  <!-- ============ DETALLE ============ -->
+  <section class="view" id="view-detail">
+    <button class="backlink" onclick="goBack()">← Volver</button>
+    <div id="detail-body"></div>
+  </section>
+
+  <!-- ============ SESIÓN ============ -->
+  <section class="view" id="view-session">
+    <button class="backlink" onclick="confirmExitSession()">← Salir de la sesión</button>
+    <div id="session-body"></div>
+  </section>
+
+  <!-- ============ GENERADOR ============ -->
+  <section class="view" id="view-generator">
+    <button class="backlink" onclick="go('home')">← Volver</button>
+    <h1 class="display">Tu semana,<br><span class="volt">generada.</span></h1>
+    <p class="lead">Reglas claras, sin caja negra: cuerpo completo, 48 h entre sesiones del mismo músculo, progresión cuando completas todas las series.</p>
+    <div class="card">
+      <div class="field">
+        <label>Modo</label>
+        <div class="seg" id="gen-mode"></div>
+      </div>
+      <div class="field">
+        <label>Días por semana</label>
+        <div class="seg" id="gen-days"></div>
+      </div>
+      <div class="field">
+        <label>Nivel</label>
+        <div class="seg" id="gen-level"></div>
+      </div>
+      <div class="field">
+        <label>Objetivo</label>
+        <div class="seg"><button class="on" type="button">Recomposición</button><button type="button" disabled title="Próximamente">Fuerza</button><button type="button" disabled title="Próximamente">Hipertrofia</button></div>
+      </div>
+      <button class="btn block big" onclick="generatePlan()">⚡ Generar mi plan</button>
+    </div>
+    <div id="plan-result"></div>
+  </section>
+
+  <!-- ============ MEDIR ============ -->
+  <section class="view" id="view-measure">
+    <h1 class="display">Medir<br><span class="volt">progreso.</span></h1>
+    <p class="lead">Tu peso y tus medidas, sin candado Premium. Todo queda en tu teléfono.</p>
+    <div class="card">
+      <h3 style="text-align:center;font-size:19px;">¿Cuál es tu peso actual?</h3>
+      <p class="small muted" style="text-align:center;margin-top:6px;">Selecciona tu unidad preferida y ajusta tu peso deslizando la regla.</p>
+      <div class="seg" style="max-width:340px;margin:14px auto 0;" id="unit-toggle">
+        <button type="button" class="on" onclick="setUnit('kg')">Kilogramos (kg)</button>
+        <button type="button" onclick="setUnit('lb')">Libras (lb)</button>
+      </div>
+      <div style="text-align:center;font-family:var(--font-display);font-size:54px;line-height:1;margin-top:18px;"><span id="measure-big">85.0</span> <span style="font-size:26px;" id="measure-big-unit">kg</span></div>
+      <div class="ruler-wrap" id="ruler-wrap"><div class="ruler-strip" id="ruler-strip"></div><div class="ruler-marker"></div><div class="ruler-fade l"></div><div class="ruler-fade r"></div></div>
+      <p class="small muted" style="text-align:center;margin-top:8px;" id="measure-meta"></p>
+      <button class="btn block big mt" onclick="saveWeightRuler()">Continuar</button>
+    </div>
+    <h2 class="sec">Historial</h2>
+    <div class="card"><div class="bars" id="weight-bars"></div></div>
+    <div id="weight-history"></div>
+    <div class="card">
+      <h3>Medidas corporales</h3>
+      <p class="muted small mt">Toca un punto de la figura para anotar esa medida. Una vez al mes y compara aquí mismo.</p>
+      <div class="measure-fig mt">
+        <div class="fig" id="measure-fig"></div>
+        <div class="fields" id="measure-fields"></div>
+      </div>
+      <button class="btn ghost block mt" onclick="saveMeasures()">Guardar medidas</button>
+      <p class="small muted mt" id="measures-saved"></p>
+    </div>
+  </section>
+
+  <footer>
+    <b style="color:var(--text);">FitStridee</b> · v1.1 web · layout referencia Drive · Gratis, sin cuenta, sin anuncios.<br>
+    Ejercicios: dataset <a href="https://github.com/hasaneyldrm/exercises-dataset" target="_blank" rel="noopener">hasaneyldrm/exercises-dataset</a> (datos MIT).<br>
+    GIFs e imágenes: <a href="https://gymvisual.com/" target="_blank" rel="noopener">© Gym visual — https://gymvisual.com/</a> · Atribución obligatoria; revisa sus términos antes de redistribuir.<br>
+    Hecha para Alan · 1.65 m · recomposición corporal.
+  </footer>
+</main>
+
+<nav class="bottom">
+  <div class="inner">
+    <button data-nav="home" class="on" onclick="go('home')"><span class="ic">📈</span>Seguir</button>
+    <button data-nav="train" onclick="go('train')"><span class="ic">🏋️</span>Entrenar</button>
+    <button data-nav="explore" onclick="go('explore')"><span class="ic">🔎</span>Ejercicios</button>
+    <button data-nav="measure" onclick="go('measure')"><span class="ic">⚖️</span>Medir</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="data/data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
