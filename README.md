@@ -109,6 +109,20 @@ lista para Pages: estática, rutas relativas, `.nojekyll` incluido.
 Para actualizarla después: sube los archivos cambiados a `main` y Pages
 republica solo. No hace falta tocar nada en el repo de la APK.
 
+## Firebase (Analytics + Hosting, proyecto `fitstridee`)
+
+- La web inicializa Firebase con el SDK modular por CDN
+  (`https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js` y
+  `firebase-analytics.js`, config de la app web de Alan) en un
+  `<script type="module">` aparte en `index.html`, con `try/catch`:
+  si no hay red o el CDN no carga, solo queda un aviso en consola y
+  la app sigue 100% local. `window.FIT_FIREBASE.ready` dice si cargó.
+- Hosting ya preparado: `firebase.json` (`public: "."`) y `.firebaserc`
+  (proyecto por defecto `fitstridee`). Para desplegar a
+  `https://fitstridee.web.app` (con la sesión de Google de Alan):
+  `firebase login`, `firebase deploy` desde esta carpeta. GitHub Pages
+  sigue funcionando igual; es un segundo hosting, no un reemplazo.
+
 ## Qué falta / próximos pasos
 
 - [ ] Elegir el logo final (A2 F Garra provisional; B2/C2 siguen en

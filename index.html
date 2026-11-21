@@ -199,5 +199,28 @@
 
 <script src="data/data.js"></script>
 <script src="app.js"></script>
+<script type="module">
+  // Firebase (Analytics) — proyecto fitstridee. Script aparte y a prueba de fallos:
+  // si no hay red o el CDN no carga, la app sigue funcionando igual (todo lo demás es local).
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js');
+    const { getAnalytics, isSupported } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js');
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrABRd16At2HZdfayDF9VQwvfFLmA5z7k",
+      authDomain: "fitstridee.firebaseapp.com",
+      projectId: "fitstridee",
+      storageBucket: "fitstridee.firebasestorage.app",
+      messagingSenderId: "644682234135",
+      appId: "1:644682234135:web:84006863a32546e7a55f52",
+      measurementId: "G-8S42Z5TW7L"
+    };
+    const fbApp = initializeApp(firebaseConfig);
+    if (await isSupported()) { getAnalytics(fbApp); }
+    window.FIT_FIREBASE = { ready: true };
+  } catch (e) {
+    console.warn('Firebase no disponible (sin red o CDN bloqueado), la app sigue local:', e);
+    window.FIT_FIREBASE = { ready: false };
+  }
+</script>
 </body>
 </html>
