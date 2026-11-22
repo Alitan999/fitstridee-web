@@ -65,6 +65,10 @@
     <h2 class="sec">Progresión automática</h2>
     <div class="card" id="home-progression"></div>
 
+    <div class="card" id="home-leo-card"></div>
+
+    <button class="btn ghost block" onclick="go('stats')">Ver todas mis estadísticas →</button>
+
     <button class="btn block big" onclick="openGenerator()">⚡ Generar mi semana</button>
     <p class="small dim mt" style="text-align:center;">Generador por reglas, en tu teléfono. Nada se sube a ningún servidor.</p>
   </section>
@@ -80,6 +84,20 @@
 
     <h2 class="sec">Rutinas de <span id="train-mode-name">casa</span></h2>
     <div id="routine-list"></div>
+
+    <h2 class="sec">Mis rutinas</h2>
+    <p class="lead">Crea las tuyas, sin límite. Se guardan solo en tu teléfono.</p>
+    <div id="custom-list"></div>
+    <button class="btn block" onclick="openCustomEditor(null)">+ Crear mi rutina</button>
+
+    <h2 class="sec">Programas guiados</h2>
+    <div class="card">
+      <span class="tag">PECHO EN CASA · 14 DÍAS</span>
+      <h3 class="mt">Pecho en casa — Día 1 a Día 14</h3>
+      <p class="muted small mt">De flexiones de rodillas a flexiones normales, con el reel de Leo (@84leo_24). 3 variantes por día, con sus series exactas del reel. Marca cada día que completes.</p>
+      <div id="leo-mini"></div>
+      <button class="btn block mt" onclick="go('leo')">Ver el programa de Leo →</button>
+    </div>
 
     <h2 class="sec">¿No sabes por dónde empezar?</h2>
     <div class="card">
@@ -147,6 +165,24 @@
     <div id="plan-result"></div>
   </section>
 
+  <!-- ============ PROGRAMA DE LEO ============ -->
+  <section class="view" id="view-leo">
+    <button class="backlink" onclick="go('train')">← Volver</button>
+    <div id="leo-body"></div>
+  </section>
+
+  <!-- ============ ESTADÍSTICAS ============ -->
+  <section class="view" id="view-stats">
+    <button class="backlink" onclick="go('home')">← Volver</button>
+    <div id="stats-body"></div>
+  </section>
+
+  <!-- ============ EDITOR DE RUTINA PROPIA ============ -->
+  <section class="view" id="view-custom">
+    <button class="backlink" onclick="go('train')">← Volver</button>
+    <div id="custom-body"></div>
+  </section>
+
   <!-- ============ MEDIR ============ -->
   <section class="view" id="view-measure">
     <h1 class="display">Medir<br><span class="volt">progreso.</span></h1>
@@ -166,6 +202,8 @@
     <h2 class="sec">Historial</h2>
     <div class="card"><div class="bars" id="weight-bars"></div></div>
     <div id="weight-history"></div>
+    <h2 class="sec">Evolución de la cintura</h2>
+    <div class="card" id="waist-evolution"></div>
     <div class="card">
       <h3>Medidas corporales</h3>
       <p class="muted small mt">Toca un punto de la figura para anotar esa medida. Una vez al mes y compara aquí mismo.</p>
@@ -179,7 +217,7 @@
   </section>
 
   <footer>
-    <b style="color:var(--text);">FitStridee</b> · v1.3 web · layout referencia Drive · Gratis, sin cuenta, sin anuncios.<br>
+    <b style="color:var(--text);">FitStridee</b> · web v1.1.0 · Gratis, sin cuenta, sin anuncios.<br>
     Ejercicios: dataset <a href="https://github.com/hasaneyldrm/exercises-dataset" target="_blank" rel="noopener">hasaneyldrm/exercises-dataset</a> (datos MIT).<br>
     GIFs e imágenes: <a href="https://gymvisual.com/" target="_blank" rel="noopener">© Gym visual — https://gymvisual.com/</a> · Atribución obligatoria; revisa sus términos antes de redistribuir.<br>
     Hecha para Alan · 1.65 m · recomposición corporal.

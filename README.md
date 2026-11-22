@@ -4,13 +4,40 @@ Web app estática de rutinas de gym, en casa y calistenia. Sin build, sin servid
 sin cuentas, sin anuncios y gratis. La misma lógica de datos y rutinas que la APK
 de Android (`~/workspace/fitstridee/app/`).
 
-## Qué incluye (v1.2 web — layout referencia Drive)
+## Qué incluye (web v1.1.0)
 
 - **Tres modos elegibles:** **Gym** (barra, polea, máquinas, mancuernas),
   **Casa** (peso corporal + 2 mancuernas; incluye la rutina mixta de Alan:
   flexiones, fondos entre sillas, sentadilla búlgara, plancha, sentadilla
   goblet, remo a un brazo, press de hombro, zancadas y curl) y **Calistenia**
   (solo peso corporal, con progresiones de fácil a difícil).
+- **Programa de Leo — Pecho en casa, Día 1 a Día 14 (nuevo v1.1.0):** las 3
+  variantes de flexiones de rodillas del reel de Leo (@84leo_24,
+  https://www.instagram.com/reel/DdOod-lMTLq/) con sus series exactas —
+  normales 3×8–12, diamante 3×10–12, manos abiertas 3×10–15 —, seguimiento
+  día a día (marca cada variante; el día se completa con las 3) y paso a
+  flexiones normales al terminar los 14 días. El reel no detalla reps por
+  día, así que cada día repite las mismas 3 variantes; no se inventó
+  ninguna progresión diaria.
+- **Rutinas propias (nuevo v1.1.0):** crear, editar, duplicar y eliminar
+  rutinas propias, sin límite, guardadas en `localStorage`. Se pueden
+  entrenar como cualquier rutina fija.
+- **Sustitución en 1 toque (nuevo v1.1.0):** en la sesión y en el detalle
+  de rutina, "Cambiar 🔀" muestra hasta 6 ejercicios del mismo músculo y
+  mismo equipo; un toque cambia. En rutinas fijas, el cambio se guarda
+  como copia propia para no perder la original.
+- **Progresión automática (nuevo v1.1.0):** al empezar una sesión, cada
+  ejercicio ya trae prellenadas las reps y el peso sugeridos según la
+  regla visible: primero reps hasta el tope del rango; si completas todas
+  las series al tope, subes peso (con mancuernas fijas o peso corporal,
+  subes por reps); cada 4ª semana es descarga (menos series, mismo peso).
+  La regla se muestra en cada ejercicio y en Seguir.
+- **Estadísticas completas (nuevo v1.1.0):** vista "Tus números" con
+  volumen por semana (últimas 6), volumen por músculo (últimos 28 días),
+  racha, peso y cintura (con cambio desde el inicio) y lista de récords
+  por ejercicio (peso máx., más reps sin peso, volumen máx. en una
+  sesión). Medir ahora guarda el historial de medidas y muestra la
+  evolución de la cintura con gráfico.
 - **Rutinas por modo:** cuerpo completo A/B/C, Empuje, Jalón, Pierna
   (6–7 rutinas por modo; calistenia suma Circuito core). Todas con series,
   reps y descanso sugeridos.
@@ -37,8 +64,9 @@ de Android (`~/workspace/fitstridee/app/`).
   propia con 7 puntos numerados** (cuello, pecho, cintura, brazo, cadera, muslo,
   pantorrilla) que enfocan su campo de medida. Todo en `localStorage`:
   nada sale de tu teléfono.
-- **Seguir (nuevo v1.2):** calorías quemadas por semana y mapa de calor de
-  4 semanas, **sin candado ni Premium** (chip “Sin candado” / “Gratis”).
+- **Seguir (nuevo v1.2):** calorías por semana (estimación, etiquetada como
+  tal) y mapa de calor de 4 semanas, **sin candado ni Premium** (chip “Sin
+  candado” / “Gratis”).
 - **Diseño v3.3:** negro `#0B0B0B` + grafito `#1C1C1E` + blanco `#FFFFFF`, tipografías
   Anton / Archivo Black / Inter (locales, sin CDN) y logo F Garra v3. Layout
   de las capturas de referencia de Drive (estructura, no assets) y figuras
@@ -48,9 +76,9 @@ de Android (`~/workspace/fitstridee/app/`).
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` | App completa (8 vistas: Seguir, Entrenar, Rutina, Ejercicios, Detalle, Sesión, Generador, Medir) |
-| `styles.css` | Sistema de diseño v3.2 |
-| `app.js` | Lógica: modos, rutinas, detalle de rutina con mapa corporal, generador, diario de sesión con RM, temporizador, historial, regla de peso, calorías y mapa de calor |
+| `index.html` | App completa (11 vistas: Seguir, Entrenar, Rutina, Ejercicios, Detalle, Sesión, Generador, Medir, Leo, Estadísticas, Editor de rutina propia) |
+| `styles.css` | Sistema de diseño v3.3 |
+| `app.js` | Lógica: modos, rutinas, detalle de rutina con mapa corporal, generador, diario de sesión con RM, temporizador, historial, regla de peso, calorías (estimación) y mapa de calor, programa de Leo, rutinas propias, sustitución en 1 toque, progresión automática con regla visible, estadísticas completas (volumen por semana/músculo, récords, cintura) |
 | `data/data.js` | 1.324 ejercicios + 200 curados, en JS para que funcione también abriendo el archivo (`file://`) |
 | `data/exercises.json` / `data/curated.json` | Los mismos datos en JSON (fuente de `data.js`) |
 | `assets/` | Logo v3 (símbolo + wordmark), icono de app y fuentes |
@@ -83,14 +111,21 @@ También funciona abriendo `index.html` directamente en el navegador (los datos
 van en `data/data.js`, no por `fetch`, justo para eso). Sin internet se ve todo
 menos los GIF, que se cargan bajo demanda.
 
-Verificado 2026-11-21 (v1.2): `node --check` de `app.js` y `data/data.js` OK; servidor
-local sirve los archivos con 200; probado en Chromium headless: detalle de
-rutina (4 pestañas, 9 filas, mapa corporal), diario (reloj de sesión,
-descanso 0:59 con cuenta atrás en el check, RM Epley 93.3 para 70 kg × 10),
-regla de peso (85.0 kg → 87.0 al deslizar → 192.0 lb), calorías y mapa de
-calor (28 celdas) en Seguir. GIF de ejemplo (`0662-I4hDWkc.gif`) responde 200
-en GitHub Raw (en el sandbox de pruebas las imágenes externas no cargan por
-el túnel, no es un fallo de la web).
+Verificado 2026-11-22 (web v1.1.0): `node --check` de `app.js` y `data/data.js`
+OK; servidor local sirve los archivos con 200; probado en jsdom (Node) con
+31 comprobaciones — programa de Leo (14 días, reps exactas, día 1 marcado
+al completar las 3 variantes), rutinas propias (crear, ver, duplicar,
+sustitución que crea copia), sustitución en sesión (6 opciones, cambio en
+1 toque), sesión con sugerencia prellenada y guardado con detalle
+(peso/reps/volumen por serie), estadísticas, evolución de la cintura y
+formato de duración ("45 min", "1 h 05 min" en vez de "00:45") — todas
+en verde y sin errores de página. El Chromium directo del sandbox no
+arranca (error "Hatch WebGL domain policy is required for browser
+startup"), así que la comprobación visual en navegador real queda
+pendiente para el agente principal. GIF de ejemplo
+(`0662-I4hDWkc.gif`) responde 200 en GitHub Raw (en el sandbox de
+pruebas las imágenes externas no cargan por el túnel, no es un fallo
+de la web).
 
 ## Publicarla en GitHub Pages
 

@@ -349,6 +349,21 @@ footer a { color: var(--muted); }
 .measure-fig .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--volt); color: var(--ink); border: none; font-size: 11px; font-weight: 700; display: grid; place-items: center; transform: translate(-50%, -50%); }
 .measure-fig .fields { flex: 1; min-width: 0; }
 
+/* ---------- v1.1.0 · Leo, estadísticas, rutinas propias, sustitución ---------- */
+.refwrap { border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 4px; }
+.refwrap .refrow { border-bottom: none; padding-bottom: 4px; }
+.rowline { display: flex; align-items: center; gap: 10px; padding: 2px 0 4px 16px; }
+.rowline .small { flex: 1; }
+.leo-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.leo-day {
+  background: var(--card); border: 1px solid var(--border); color: var(--text);
+  border-radius: 12px; padding: 10px 4px; text-align: center;
+}
+.leo-day b { display: block; font-size: 13px; }
+.leo-day span { font-size: 10px; color: var(--muted); }
+.leo-day.done { background: var(--volt); color: var(--ink); border-color: var(--volt); }
+.leo-day.done span { color: var(--ink); }
+.leo-day.next { border-color: var(--volt); box-shadow: 0 0 0 1px var(--volt); }
 @media (min-width: 640px) {
   h1.display { font-size: 56px; }
   .app { padding-bottom: 120px; }

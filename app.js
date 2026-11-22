@@ -1,4 +1,4 @@
-/* FitStridee web v1 — lógica 100% local, sin servidor, sin cuentas, gratis.
+/* FitStridee web v1.1.0 — lógica 100% local, sin servidor, sin cuentas, gratis.
    Datos: window.FIT_EXERCISES (1324) + window.FIT_CURATED (200) desde data/data.js
    (fuente: hasaneyldrm/exercises-dataset; GIFs © Gym visual, bajo demanda). */
 'use strict';
@@ -35,6 +35,30 @@ let sessions = LS.get('sessions', []);
 let weights = LS.get('weights', []);
 if (!weights.length) { weights = [{ date: '2026-11-10', weight: 85.0 }]; LS.set('weights', weights); }
 let measures = LS.get('measures', null);
+let measuresHistory = LS.get('measuresHistory', []);
+if (!measuresHistory.length && measures) measuresHistory = [measures];
+let customRoutines = LS.get('customRoutines', []);
+let leoState = LS.get('leo', { startDate: null, days: {} });
+
+/* ---------------- Programa de Leo (@84leo_24) ---------------- */
+/* Reel "Beginner chest workout at home (easy)", https://www.instagram.com/reel/DdOod-lMTLq/
+   Series y reps EXACTAS del reel, sin inventar nada. El reel muestra un gráfico
+   Día 1 a Día 14 pero no detalla reps por día, así que el programa repite cada día
+   las 3 variantes con sus series del reel y marca el día completo cuando haces las 3. */
+const LEO = {
+  title: 'Pecho en casa — Día 1 a Día 14',
+  creator: 'Leo (@84leo_24)',
+  url: 'https://www.instagram.com/reel/DdOod-lMTLq/',
+  totalDays: 14,
+  variants: [
+    { id: '3211', label: 'Flexiones de rodillas normales', sets: 3, reps: '8-12', rest: 60 },
+    { id: '0283', label: 'Flexiones de rodillas diamante', sets: 3, reps: '10-12', rest: 60 },
+    { id: '1311', label: 'Flexiones de rodillas con manos abiertas', sets: 3, reps: '10-15', rest: 60 }
+  ]
+};
+function leoDoneDays() { return Object.keys(leoState.days || {}).filter(d => leoState.days[d] && leoState.days[d].done).length; }
+function leoNextDay() { for (let d = 1; d <= LEO.totalDays; d++) { if (!leoState.days[d] || !leoState.days[d].done) return d; } return null; }
+function leoSave() { LS.set('leo', leoState); }
 
 /* ---------------- Modos ---------------- */
 const MODES = {
@@ -126,7 +150,15 @@ function allRoutines() {
   return out;
 }
 const ROUTINES = allRoutines();
-function findRoutine(id) { return ROUTINES[id] || null; }
+function customRoutineObj(c) {
+  return { id: c.id, title: c.title, subtitle: c.subtitle || 'Rutina propia · ' + MODES[c.mode].name, tag: 'MÍA', durationMin: c.durationMin || 45, kcal: c.kcal || 300, level: 'Principiante', mode: c.mode, custom: true, exercises: c.exercises };
+}
+function findRoutine(id) {
+  const c = customRoutines.find(x => x.id === id);
+  if (c) return customRoutineObj(c);
+  return ROUTINES[id] || null;
+}
+function saveCustomRoutines() { LS.set('customRoutines', customRoutines); }
 
 /* Generador de semana por reglas: días × modo × nivel */
 function buildPlan(m, days, level) {
@@ -170,6 +202,9 @@ function go(view) {
   if (view === 'train') renderTrain();
   if (view === 'explore') renderExplore();
   if (view === 'measure') renderMeasure();
+  if (view === 'leo') renderLeo();
+  if (view === 'stats') renderStats();
+  if (view === 'custom') renderCustomEditor();
 }
 function goBack() { go(lastView === 'detail' || lastView === 'session' ? 'explore' : lastView); }
 function openGenerator() { go('generator'); renderGenerator(); }
@@ -210,6 +245,80 @@ function progressionTip() {
   if (done === total) return 'La última sesión la completaste entera (' + esc(last.routineTitle || 'rutina') + '). Próxima vez: sube 1-2 reps en cada ejercicio; cuando llegues al tope del rango, sube peso.';
   return 'En tu última sesión completaste ' + done + ' de ' + total + ' ejercicios. Repite la misma rutina hasta completarla entera y luego sube reps.';
 }
+/* ---------------- Progresión automática (regla visible) ---------------- */
+/* Doble progresión: primero subes reps hasta el tope del rango; cuando completas
+   todas las series al tope, subes peso (con mancuernas fijas o peso corporal,
+   subes reps o pasas a una variante más difícil). Cada 4ª semana es descarga:
+   menos series, mismo peso. La regla se muestra en cada ejercicio, no es secreta. */
+function parseRepsRange(reps) {
+  const m = String(reps || '').match(/(\d+)\s*-\s*(\d+)/);
+  if (m) return [parseInt(m[1], 10), parseInt(m[2], 10)];
+  const n = parseInt(String(reps || '').match(/\d+/) || '', 10);
+  return isNaN(n) ? null : [n, n];
+}
+function lastPerformance(exId) {
+  for (let i = sessions.length - 1; i >= 0; i--) {
+    const s = sessions[i];
+    const ex = (s.exercises || []).find(e => e.id === exId);
+    if (!ex) continue;
+    const detail = (ex.setsDetail || []).filter(d => d.done);
+    return {
+      date: s.date, sets: ex.sets, setsDone: ex.setsDone || detail.length,
+      reps: detail.map(d => parseInt(d.reps, 10) || 0),
+      weights: detail.map(d => parseNum(d.weight)),
+      completedAll: (ex.setsDone || 0) >= (ex.sets || 0) && (ex.sets || 0) > 0
+    };
+  }
+  return null;
+}
+function weekInCycle() {
+  if (!sessions.length) return 1;
+  const first = new Date(sessions[0].date).getTime();
+  const weeks = Math.max(0, Math.floor((Date.now() - first) / (7 * 24 * 3600 * 1000)));
+  return (weeks % 4) + 1;
+}
+function suggestionFor(ex, base) {
+  const range = parseRepsRange(base.reps);
+  const cycle = weekInCycle();
+  const deload = cycle === 4;
+  const last = lastPerformance(ex.id);
+  const isFixed = ex.equipment === 'body weight' || ex.equipment === 'dumbbell';
+  if (!range) return { reps: '', weight: '', sets: base.sets, deload, text: 'Hazlo con calma y marca cada serie que completes.' };
+  const [lo, hi] = range;
+  if (deload) {
+    return {
+      reps: String(lo), weight: last && Math.max.apply(null, last.weights.concat([0])) > 0 ? String(Math.max.apply(null, last.weights)) : (ex.equipment === 'dumbbell' ? '7' : ''),
+      sets: Math.max(2, base.sets - 1), deload: true,
+      text: 'Semana 4 de 4: descarga. Haz ' + Math.max(2, base.sets - 1) + ' series con ' + lo + ' reps y el mismo peso de la semana pasada, para recuperarte. La semana que viene vuelves a subir.'
+    };
+  }
+  if (!last) {
+    return {
+      reps: String(lo), weight: ex.equipment === 'dumbbell' ? '7' : '', sets: base.sets, deload: false,
+      text: 'Primera vez con este ejercicio: empieza con ' + lo + ' reps por serie' + (ex.equipment === 'dumbbell' ? ' con tus mancuernas de 7 kg' : '') + '. Si completas todas las series, la próxima vez subes.'
+    };
+  }
+  const lastWeight = Math.max.apply(null, last.weights.concat([0]));
+  const topReps = last.reps.length ? Math.min.apply(null, last.reps) : 0;
+  const atTop = last.completedAll && topReps >= hi;
+  if (atTop) {
+    if (isFixed) {
+      return {
+        reps: String(hi + 2), weight: lastWeight > 0 ? String(lastWeight) : (ex.equipment === 'dumbbell' ? '7' : ''), sets: base.sets, deload: false,
+        text: 'La última vez completaste todas las series con ' + hi + ' reps. Hoy intenta ' + (hi + 2) + ' reps por serie con el mismo peso. Con mancuernas fijas se progresa por reps.'
+      };
+    }
+    const nextW = lastWeight > 0 ? (lastWeight + (lastWeight >= 20 ? 2.5 : 1)) : '';
+    return {
+      reps: String(lo), weight: nextW === '' ? '' : String(nextW), sets: base.sets, deload: false,
+      text: 'La última vez completaste todas las series con ' + hi + ' reps y ' + lastWeight + ' kg. Hoy sube a ' + nextW + ' kg y vuelve a ' + lo + ' reps por serie.'
+    };
+  }
+  return {
+    reps: String(hi), weight: lastWeight > 0 ? String(lastWeight) : (ex.equipment === 'dumbbell' ? '7' : ''), sets: base.sets, deload: false,
+    text: 'La última vez hiciste ' + (last.setsDone || 0) + ' de ' + (last.sets || base.sets) + ' series. Hoy repite el mismo peso e intenta llegar a ' + hi + ' reps en todas las series.'
+  };
+}
 function renderHome() {
   const st = weekStats();
   document.getElementById('stat-sessions').textContent = sessions.length;
@@ -229,7 +338,16 @@ function renderHome() {
   document.getElementById('week-note').textContent = st.recent
     ? st.recent + (st.recent === 1 ? ' sesión ' : ' sesiones ') + 'esta semana. Las estadísticas son tuyas: aquí nunca van detrás de un pago.'
     : 'Sin sesiones esta semana todavía. Empieza con la rutina de hoy: son 45 minutos.';
-  document.getElementById('home-progression').innerHTML = '<h3>📈 Qué toca subir</h3><p class="muted small mt">' + esc(progressionTip()) + '</p>';
+  document.getElementById('home-progression').innerHTML = '<h3>📈 Qué toca subir</h3><p class="muted small mt">' + esc(progressionTip()) + '</p>' +
+    '<p class="small muted mt">Regla: primero subes reps hasta el tope del rango; cuando completas todas las series al tope, subes peso. Con mancuernas fijas o peso corporal, subes por reps. Semana ' + weekInCycle() + ' de 4' + (weekInCycle() === 4 ? ' (descarga: menos series, mismo peso)' : '') + '.</p>';
+  const leoEl = document.getElementById('home-leo-card');
+  if (leoEl) {
+    const done = leoDoneDays(), next = leoNextDay();
+    leoEl.innerHTML = '<div class="spread"><h3>💪 Pecho en casa — Leo</h3><span class="tag">' + done + '/14 días</span></div>' +
+      '<div class="progress" style="margin-top:10px;"><i style="width:' + Math.round(done / 14 * 100) + '%"></i></div>' +
+      '<p class="muted small mt">' + (next ? 'Te toca el día ' + next + ': 3 variantes de flexiones de rodillas.' : '¡Programa completado! Ya puedes probar las flexiones normales.') + '</p>' +
+      '<button class="btn ghost block mt" onclick="go(\'leo\')">' + (next ? 'Ver el día ' + next + ' →' : 'Ver mi progreso →') + '</button>';
+  }
   renderHomeCalories();
   renderHomeHeat();
 }
@@ -254,11 +372,11 @@ function renderHomeCalories() {
   }
   const max = Math.max(1, ...days.map(d => d.kcal));
   const trainedDays = days.filter(d => d.kcal).length;
-  el.innerHTML = '<div class="spread"><h3>Calorías quemadas por semana</h3><span class="tag">Sin candado</span></div>' +
+  el.innerHTML = '<div class="spread"><h3>Calorías por semana (estimación)</h3><span class="tag">Sin candado</span></div>' +
     '<div class="bars" style="margin-top:10px;">' + days.map(d =>
       '<div class="bar-col"><b>' + (d.kcal || '—') + '</b><i class="' + (d.kcal ? 'hot' : '') + '" style="height:' + Math.max(4, d.kcal / max * 72) + 'px"></i><span>' + d.label + '</span></div>').join('') + '</div>' +
-    '<p class="small muted mt">Total esta semana: <b style="color:#fff;">' + total.toLocaleString('es-MX') + ' kcal</b>' +
-    (trainedDays ? ' · promedio ' + Math.round(total / trainedDays) + ' kcal por sesión' : ' · sin sesiones todavía') + '</p>';
+    '<p class="small muted mt">Total esta semana: <b style="color:#fff;">' + total.toLocaleString('es-MX') + ' kcal (estimación)</b>' +
+    (trainedDays ? ' · promedio ' + Math.round(total / trainedDays) + ' kcal por sesión' : ' · sin sesiones todavía') + ' · Es una estimación según la rutina, no una medición.</p>';
 }
 function renderHomeHeat() {
   const el = document.getElementById('home-heat');
@@ -302,6 +420,23 @@ function renderTrain() {
       '<p class="small mt"><b>' + esc(p.base) + ':</b> <span class="muted">' + p.levels.map(esc).join(' → ') + '</span></p>').join('') : '') +
     '</div>';
   document.getElementById('routine-list').innerHTML = buildRoutines(mode).map(r => routineCard(r)).join('');
+  const mine = customRoutines.filter(c => c.mode === mode);
+  document.getElementById('custom-list').innerHTML = mine.length
+    ? mine.map(c => {
+        const r = customRoutineObj(c);
+        return '<div class="card"><div class="spread"><div><span class="tag">MÍA · ' + MODES[c.mode].name.toUpperCase() + '</span><h3 class="mt">' + esc(c.title) + '</h3>' +
+          '<p class="muted small mt">' + r.exercises.length + ' ejercicios · ' + (c.durationMin || 45) + ' min</p></div></div>' +
+          '<div class="row mt"><button class="btn sm" style="flex:1;" onclick="openRoutine(\'' + c.id + '\')">Ver y empezar →</button>' +
+          '<button class="btn ghost sm" onclick="openCustomEditor(\'' + c.id + '\')">Editar</button>' +
+          '<button class="btn ghost sm" onclick="duplicateCustom(\'' + c.id + '\')">Duplicar</button>' +
+          '<button class="btn danger sm" onclick="deleteCustom(\'' + c.id + '\')">Eliminar</button></div></div>';
+      }).join('')
+    : '<p class="muted small">Aún no tienes rutinas propias en ' + MODES[mode].name + '. Crea una con los ejercicios que tú elijas.</p>';
+  const leoMini = document.getElementById('leo-mini');
+  if (leoMini) {
+    const done = leoDoneDays();
+    leoMini.innerHTML = '<div class="progress" style="margin-top:10px;"><i style="width:' + Math.round(done / 14 * 100) + '%"></i></div><p class="small muted mt">' + done + ' de 14 días completados.</p>';
+  }
 }
 function setMode(m) {
   mode = m; LS.set('mode', m);
@@ -316,7 +451,7 @@ function routineCard(r, showStart) {
   return '<button class="routine" onclick="openRoutine(\'' + r.id + '\')">' +
     '<div class="spread"><h3>' + esc(r.title) + '</h3><span class="tag">' + esc(r.tag) + '</span></div>' +
     '<p class="muted small" style="margin-top:4px;">' + esc(r.subtitle) + '</p>' +
-    '<div class="meta"><span>⏱ <b>' + r.durationMin + ' min</b></span><span>🔥 <b>' + r.kcal + ' kcal</b></span>' +
+    '<div class="meta"><span>⏱ <b>' + r.durationMin + ' min</b></span><span>🔥 <b>≈' + r.kcal + ' kcal</b></span>' +
     '<span>💪 <b>' + r.exercises.length + ' ejercicios</b></span><span>' + esc(r.level) + '</span></div>' +
     '<div class="thumb-strip">' + thumbs + '</div>' +
     '<p class="small volt" style="margin-top:10px;font-weight:700;">' + (showStart ? 'Empezar esta rutina →' : 'Ver ejercicios y empezar →') + '</p>' +
@@ -386,8 +521,10 @@ function musclesForRoutine(r) {
   return { front, back, frontSec, backSec };
 }
 function fmtDuration(min) {
-  const h = Math.floor(min / 60), m = min % 60;
-  return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  const m = Math.round(min);
+  if (m < 60) return m + ' min';
+  const h = Math.floor(m / 60), r = m % 60;
+  return h + ' h' + (r ? ' ' + String(r).padStart(2, '0') + ' min' : '');
 }
 function intensityOf(r) { return r.kcal >= 330 ? 'alta' : (r.kcal >= 250 ? 'moderada' : 'suave'); }
 
@@ -419,29 +556,48 @@ function openRoutine(id) {
 }
 function renderRoutine(id) {
   const r = findRoutine(id); if (!r) return;
-  const tabs = routineTabs(r.mode);
+  const tabs = r.custom ? [{ label: 'Mi rutina', id }] : routineTabs(r.mode);
   const mus = musclesForRoutine(r);
   const equipSet = [...new Set(r.exercises.map(e => { const ex = byId[e.id]; return ex ? equipEs(ex.equipment) : ''; }).filter(Boolean))];
   const rows = r.exercises.map((e, i) => {
     const ex = byId[e.id]; if (!ex) return '';
-    return '<button class="refrow" onclick="openExercise(\'' + ex.id + '\')">' +
+    const sug = suggestionFor(ex, e);
+    return '<div class="refwrap">' +
+      '<button class="refrow" onclick="openExercise(\'' + ex.id + '\')">' +
       '<span class="accent' + (i < 3 ? ' hot' : '') + '"></span>' +
       '<img src="' + imgUrl(ex) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
       '<span class="nm"><b>' + esc(displayName(ex)) + '</b><span>' + equipEs(ex.equipment) + ' · Bilateral</span></span>' +
-      '<span class="setpill">' + e.sets + ' x ' + esc(e.reps) + ' · ' + e.rest + '</span></button>';
+      '<span class="setpill">' + e.sets + ' x ' + esc(e.reps) + ' · ' + e.rest + ' s</span></button>' +
+      '<div class="rowline"><button class="btn ghost sm" onclick="swapInRoutine(\'' + r.id + '\',' + i + ')">Cambiar 🔀</button>' +
+      '<span class="small muted">' + esc(sug.text) + '</span></div></div>';
   }).join('');
+  const customActions = r.custom
+    ? '<div class="row" style="margin-top:14px;"><button class="btn ghost" style="flex:1;" onclick="openCustomEditor(\'' + r.id + '\')">Editar rutina</button>' +
+      '<button class="btn ghost" style="flex:1;" onclick="duplicateCustom(\'' + r.id + '\')">Duplicar</button>' +
+      '<button class="btn danger" onclick="deleteCustom(\'' + r.id + '\')">Eliminar</button></div>'
+    : '<p class="small muted mt" style="text-align:center;">Si cambias un ejercicio de esta rutina, se guarda como una copia tuya para no perder la original.</p>';
   document.getElementById('routine-body').innerHTML =
     '<div class="topbar2"><button class="back" onclick="go(\'train\')" aria-label="Volver">←</button><div class="prog"><i style="width:78%"></i></div></div>' +
     '<div class="rtabs">' + tabs.map(t => '<button class="' + (t.id === id ? 'on' : '') + '" onclick="renderRoutine(\'' + t.id + '\')">' + esc(t.label) + '</button>').join('') + '</div>' +
     '<div class="rhead"><div class="info">' +
       '<h2>' + esc(r.title) + '</h2>' +
       '<div class="stat-line">⏱ <span>' + fmtDuration(r.durationMin) + '</span></div>' +
-      '<div class="stat-line">🔥 <span>' + r.kcal + ' kcal</span></div>' +
+      '<div class="stat-line">🔥 <span>≈' + r.kcal + ' kcal (estimación)</span></div>' +
       '<div class="stat-line">⚡ <span>' + intensityOf(r) + '</span></div>' +
-      '<div class="stat-line" style="margin-top:12px;"><span class="muted">ejercicio</span> <b>x' + r.exercises.length + '</b></div>' +
+      '<div class="stat-line" style="margin-top:12px;"><span class="muted">ejercicios</span> <b>' + r.exercises.length + '</b></div>' +
       '<div class="stat-line" style="margin-top:10px;"><span class="muted">' + esc(equipSet.join(' · ') || MODES[r.mode].name) + '</span></div>' +
     '</div><div class="bodymap">' + bodyFigure(false, mus.front, mus.frontSec) + bodyFigure(true, mus.back, mus.backSec) + '</div></div>' +
     '<div style="margin-top:8px;">' + rows + '</div>' +
+    (routineSwap && routineSwap.routineId === id ? (function () {
+      const cur = r.exercises[routineSwap.idx];
+      const ex = cur ? byId[cur.id] : null;
+      if (!ex) return '';
+      const alts = swapCandidates(ex, r.mode, r.exercises.map(e => e.id));
+      return '<div class="card" id="routine-swap" style="margin-top:12px;"><p style="font-weight:700;">Cambiar «' + esc(displayName(ex)) + '» por uno del mismo músculo y equipo:</p>' +
+        (alts.length ? alts.map(a => '<button class="ex-row" style="margin-top:8px;" onclick="applyRoutineSwap(\'' + a.id + '\')"><img src="' + imgUrl(a) + '" alt="" loading="lazy"><span><h4>' + esc(displayName(a)) + '</h4><p>' + equipEs(a.equipment) + ' · ' + targetEs(a.target) + '</p></span><span class="go">›</span></button>').join('') : '<p class="muted small mt">No hay otro ejercicio del mismo músculo con el mismo equipo en este modo.</p>') +
+        '<button class="btn ghost sm block mt" onclick="routineSwap=null;renderRoutine(\'' + id + '\');">Cancelar</button></div>';
+    })() : '') +
+    customActions +
     '<button class="btn block big" style="margin-top:18px;" onclick="startRoutine(\'' + r.id + '\')">Continuar</button>' +
     '<p class="small dim mt" style="text-align:center;">' + esc(MODES[r.mode].name) + ' · FitStridee · Gratis, sin paywall</p>';
 }
@@ -572,10 +728,15 @@ function startSession(r) {
     routineId: r.id, routineTitle: r.title, mode,
     durationMin: r.durationMin || 50, kcal: r.kcal || 300,
     startedAt: new Date().toISOString(),
-    items: r.exercises.map(e => ({
-      id: e.id, sets: e.sets, reps: e.reps, rest: e.rest,
-      checks: Array.from({ length: e.sets }, () => ({ done: false, reps: '', weight: '' }))
-    }))
+    items: r.exercises.map(e => {
+      const ex = byId[e.id];
+      const sug = ex ? suggestionFor(ex, e) : null;
+      return {
+        id: e.id, sets: sug ? sug.sets : e.sets, reps: e.reps, rest: e.rest,
+        suggestion: sug ? sug.text : '',
+        checks: Array.from({ length: sug ? sug.sets : e.sets }, () => ({ done: false, reps: sug ? sug.reps : '', weight: sug ? sug.weight : '' }))
+      };
+    })
   };
   restChoice = (r.exercises[0] && r.exercises[0].rest) || 60;
   restSetKey = null;
@@ -599,7 +760,7 @@ function renderSession() {
   if (!session) return;
   const pct = sessionProgress();
   const body = document.getElementById('session-body');
-  const totalFmt = fmtDuration(session.durationMin || 50) + ':00';
+  const totalFmt = fmtHMS((session.durationMin || 50) * 60);
   body.innerHTML =
     '<div class="diary-title">Tu diario de<br>entrenamiento</div>' +
     '<p class="diary-sub">' + esc(session.routineTitle) + ' · ' + esc(MODES[session.mode].name) + '</p>' +
@@ -623,6 +784,8 @@ function renderSession() {
         '<div class="spread"><h3>' + esc(displayName(ex)) + '</h3>' +
         '<button class="btn ghost sm" onclick="swapExercise(' + i + ')">Cambiar 🔀</button></div>' +
         '<p class="small muted">' + it.sets + '×' + esc(it.reps) + ' · descanso ' + it.rest + ' s · ' + equipEs(ex.equipment) + '</p>' +
+        (it.suggestion ? '<p class="small mt" style="background:var(--card2);border-radius:10px;padding:8px 10px;">📈 ' + esc(it.suggestion) + '</p>' : '') +
+        (swapOpen === i ? swapChooserHtml(i) : '') +
         '<div class="row" style="margin-top:8px;"><img src="' + imgUrl(ex) + '" alt="" style="width:56px;height:56px;border-radius:12px;object-fit:cover;" loading="lazy">' +
         '<button class="btn ghost sm" onclick="openExercise(\'' + ex.id + '\')">Ver cómo se hace</button></div>' +
         '<div class="seg2"><span class="on">' + equipEs(ex.equipment) + '</span><span>Bilateral</span></div>' +
@@ -673,15 +836,78 @@ function toggleSet(i, s) {
   renderSession();
 }
 function setField(i, s, field, val) { session.items[i].checks[s][field] = val; }
-function swapExercise(i) {
+let swapOpen = null;
+function swapCandidates(ex, modeKey, excludeIds) {
+  const pool = curatedPool(modeKey).filter(e => e.target === ex.target && e.id !== ex.id && !excludeIds.includes(e.id));
+  const cur = new Set(CURATED.map(c => c.id));
+  pool.sort((a, b) => ((cur.has(b.id) ? 1 : 0) - (cur.has(a.id) ? 1 : 0)) || (a.id < b.id ? -1 : 1));
+  return pool.slice(0, 6);
+}
+function swapChooserHtml(i) {
   const it = session.items[i];
-  const ex = byId[it.id]; if (!ex) return;
-  const pool = curatedPool(session.mode).filter(e => e.target === ex.target && e.id !== it.id && !session.items.some(x => x.id === e.id));
-  if (!pool.length) { toast('Sin alternativa del mismo músculo en este modo'); return; }
-  const alt = pool[Math.floor(Math.random() * pool.length)];
-  session.items[i] = Object.assign({}, it, { id: alt.id, checks: Array.from({ length: it.sets }, () => ({ done: false, reps: '', weight: '' })) });
+  const ex = byId[it.id]; if (!ex) return '';
+  const alts = swapCandidates(ex, session.mode, session.items.map(x => x.id));
+  if (!alts.length) return '<p class="small muted mt">No hay otro ejercicio del mismo músculo con el mismo equipo en este modo.</p>';
+  return '<div class="card" style="background:var(--card2);margin-top:10px;"><p class="small" style="font-weight:700;">Toca uno para cambiarlo (mismo músculo, mismo equipo):</p>' +
+    alts.map(a => '<button class="ex-row" style="margin-top:8px;" onclick="applySwap(' + i + ',\'' + a.id + '\')">' +
+      '<img src="' + imgUrl(a) + '" alt="" loading="lazy"><span><h4>' + esc(displayName(a)) + '</h4><p>' + equipEs(a.equipment) + ' · ' + targetEs(a.target) + '</p></span><span class="go">›</span></button>').join('') +
+    '<button class="btn ghost sm block mt" onclick="swapOpen=null;renderSession();">Cancelar</button></div>';
+}
+function swapExercise(i) {
+  swapOpen = swapOpen === i ? null : i;
+  renderSession();
+}
+function applySwap(i, altId) {
+  const it = session.items[i];
+  const alt = byId[altId]; if (!alt) return;
+  const c = curatedMap[altId];
+  session.items[i] = Object.assign({}, it, {
+    id: altId, sets: (c && c.sets) || it.sets, reps: (c && c.reps) || it.reps,
+    suggestion: 'Cambiaste a ' + displayName(alt) + ' en esta sesión. La rutina original no cambia.',
+    checks: Array.from({ length: (c && c.sets) || it.sets }, () => ({ done: false, reps: '', weight: '' }))
+  });
+  swapOpen = null;
   renderSession();
   toast('Cambiado a ' + displayName(alt));
+}
+/* Cambiar un ejercicio dentro de una rutina (antes de empezar).
+   En rutinas propias se cambia en su sitio; en las fijas se crea una copia tuya con el cambio. */
+let routineSwap = null;
+function swapInRoutine(routineId, idx) {
+  const r = findRoutine(routineId);
+  if (!r) return;
+  routineSwap = { routineId, idx };
+  renderRoutine(routineId);
+  const el = document.getElementById('routine-swap');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function applyRoutineSwap(altId) {
+  if (!routineSwap) return;
+  const r = findRoutine(routineSwap.routineId);
+  if (!r) return;
+  const alt = byId[altId]; if (!alt) return;
+  const c = curatedMap[altId];
+  const newItem = { id: altId, sets: (c && c.sets) || 3, reps: (c && c.reps) || '10-12', rest: (c && c.rest_seconds) || 60 };
+  if (r.custom) {
+    const cr = customRoutines.find(x => x.id === r.id);
+    cr.exercises[routineSwap.idx] = newItem;
+    saveCustomRoutines();
+    toast('Ejercicio cambiado en tu rutina');
+  } else {
+    const copy = {
+      id: 'mia-' + Date.now(), title: r.title + ' (mía)', subtitle: 'Copia de ' + r.title + ' con un cambio',
+      mode: r.mode, durationMin: r.durationMin, kcal: r.kcal,
+      exercises: r.exercises.map((e, i) => i === routineSwap.idx ? newItem : { id: e.id, sets: e.sets, reps: e.reps, rest: e.rest })
+    };
+    customRoutines.push(copy);
+    saveCustomRoutines();
+    toast('Guardado como rutina propia: ' + copy.title);
+    routineSwap = null;
+    openRoutine(copy.id);
+    return;
+  }
+  routineSwap = null;
+  renderRoutine(r.id);
 }
 function confirmExitSession() {
   if (session && sessionProgress() > 0) {
@@ -697,7 +923,17 @@ function finishSession() {
   const total = session.items.reduce((n, it) => n + it.checks.length, 0);
   sessions.push({
     date: new Date().toISOString(), routineId: session.routineId, routineTitle: session.routineTitle, mode: session.mode,
-    exercises: session.items.map(it => ({ id: it.id, sets: it.sets, setsDone: it.checks.filter(c => c.done).length })),
+    exercises: session.items.map(it => {
+      const ex = byId[it.id];
+      const detail = it.checks.map(c => ({ done: !!c.done, reps: c.reps || '', weight: c.weight || '' }));
+      const vol = detail.reduce((n, d) => n + (d.done ? parseNum(d.weight) * (parseInt(d.reps, 10) || 0) : 0), 0);
+      const bwVol = detail.reduce((n, d) => n + (d.done && !parseNum(d.weight) ? (parseInt(d.reps, 10) || 0) : 0), 0);
+      return {
+        id: it.id, sets: it.sets, setsDone: it.checks.filter(c => c.done).length,
+        setsDetail: detail, volumeKg: vol, bodyweightReps: bwVol,
+        bodyPart: ex ? ex.body_part : '', target: ex ? ex.target : '', equipment: ex ? ex.equipment : ''
+      };
+    }),
     setsDone: done, setsTotal: total
   });
   LS.set('sessions', sessions);
@@ -745,6 +981,266 @@ function stopTimer() {
   if (timerInt) { clearInterval(timerInt); timerInt = null; }
   document.querySelectorAll('.check.now').forEach(el => { el.textContent = '✓'; el.classList.remove('now'); el.classList.add('done'); });
   const b = document.getElementById('timer-box'); if (b) b.style.display = 'none';
+}
+
+/* ---------------- Programa de Leo: Día 1 a Día 14 ---------------- */
+function leoDayState(d) { return leoState.days[d] || { done: false, variants: {} }; }
+function renderLeo() {
+  const el = document.getElementById('leo-body');
+  if (!el) return;
+  const done = leoDoneDays(), next = leoNextDay();
+  const variantRows = LEO.variants.map(v => {
+    const ex = byId[v.id];
+    return '<button class="ex-row" onclick="openExercise(\'' + v.id + '\')">' +
+      '<img src="' + (ex ? imgUrl(ex) : '') + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
+      '<span><h4>' + esc(v.label) + '</h4><p>' + v.sets + ' series × ' + v.reps + ' reps · descanso ' + v.rest + ' s · de rodillas</p></span><span class="go">›</span></button>';
+  }).join('');
+  const dayCells = [];
+  for (let d = 1; d <= LEO.totalDays; d++) {
+    const st = leoDayState(d);
+    const n = LEO.variants.filter(v => st.variants && st.variants[v.id]).length;
+    dayCells.push('<button class="leo-day' + (st.done ? ' done' : '') + (d === next ? ' next' : '') + '" onclick="leoDayDetail(' + d + ')">' +
+      '<b>Día ' + d + '</b><span>' + (st.done ? '✓ hecho' : n + '/3 variantes') + '</span></button>');
+  }
+  el.innerHTML =
+    '<span class="tag">PECHO EN CASA · 14 DÍAS</span>' +
+    '<h1 class="display" style="font-size:34px;">Pecho en casa<br><span class="volt">Día 1 a Día 14</span></h1>' +
+    '<p class="lead">De flexiones de rodillas a flexiones normales, con el reel de Leo (@84leo_24). <a href="' + LEO.url + '" target="_blank" rel="noopener">Ver el reel en Instagram ↗</a></p>' +
+    '<div class="card"><div class="spread"><h3>Tu avance</h3><span class="tag">' + done + '/14 días</span></div>' +
+    '<div class="progress" style="margin-top:10px;"><i style="width:' + Math.round(done / 14 * 100) + '%"></i></div>' +
+    '<p class="muted small mt">' + (next ? 'Te toca el día ' + next + '. Haz las 3 variantes de abajo y marca cada una al terminarla.' : '¡Completaste los 14 días! Ahora prueba las flexiones normales.') + '</p>' +
+    (next ? '<button class="btn block big mt" onclick="startLeoDay(' + next + ')">Empezar el día ' + next + ' →</button>'
+      : '<button class="btn block big mt" onclick="startSingle(\'0662\')">Probar flexiones normales →</button>') + '</div>' +
+    '<h2 class="sec">Las 3 variantes (cada día)</h2>' +
+    '<p class="small muted">Series y reps exactas del reel. El reel no detalla reps por día, así que cada día repites las mismas 3 variantes: lo que crece es tu constancia, día a día.</p>' +
+    variantRows +
+    '<h2 class="sec">Marca tus días</h2>' +
+    '<div class="leo-grid">' + dayCells.join('') + '</div>' +
+    '<div id="leo-day-detail"></div>' +
+    '<div class="card"><h3>¿Y después del día 14?</h3><p class="muted small mt">Si completaste los 14 días haciendo las 3 variantes, prueba las flexiones normales (sin rodillas). Empieza con 3 series de las reps que puedas con buena técnica y usa la progresión automática de la app para seguir subiendo.</p></div>' +
+    '<button class="btn ghost block" onclick="if(confirm(\'¿Empezar el programa de Leo desde cero? Se borran los días marcados.\')){leoState={startDate:null,days:{}};leoSave();renderLeo();renderHome();}">Reiniciar el programa</button>';
+}
+function leoDayDetail(d) {
+  const st = leoDayState(d);
+  const el = document.getElementById('leo-day-detail');
+  if (!el) return;
+  el.innerHTML = '<div class="card" style="margin-top:12px;"><div class="spread"><h3>Día ' + d + '</h3>' +
+    '<span class="tag">' + (st.done ? 'HECHO ✓' : 'PENDIENTE') + '</span></div>' +
+    LEO.variants.map(v => {
+      const on = st.variants && st.variants[v.id];
+      return '<button class="ex-row" style="margin-top:8px;" onclick="toggleLeoVariant(' + d + ',\'' + v.id + '\')">' +
+        '<span class="check ' + (on ? 'done' : '') + '" style="width:34px;height:34px;flex:none;border-radius:50%;border:2px solid var(--border);display:grid;place-items:center;font-size:17px;">' + (on ? '✓' : '') + '</span>' +
+        '<span><h4>' + esc(v.label) + '</h4><p>' + v.sets + ' × ' + v.reps + ' reps</p></span></button>';
+    }).join('') +
+    '<button class="btn block mt" onclick="startLeoDay(' + d + ')">Entrenar este día →</button></div>';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function toggleLeoVariant(d, vid) {
+  if (!leoState.days[d]) leoState.days[d] = { done: false, variants: {} };
+  const v = leoState.days[d].variants;
+  v[vid] = !v[vid];
+  leoState.days[d].done = LEO.variants.every(x => v[x.id]);
+  if (leoState.days[d].done) leoState.days[d].date = new Date().toISOString().slice(0, 10);
+  if (!leoState.startDate) leoState.startDate = new Date().toISOString().slice(0, 10);
+  leoSave();
+  renderLeo(); leoDayDetail(d); renderHome();
+}
+function startLeoDay(d) {
+  if (!leoState.startDate) { leoState.startDate = new Date().toISOString().slice(0, 10); leoSave(); }
+  startSession({
+    id: 'leo-dia-' + d, title: 'Pecho en casa — Día ' + d + ' (Leo)', subtitle: 'Flexiones de rodillas · 3 variantes',
+    tag: 'LEO', durationMin: 20, kcal: 120, level: 'Principiante',
+    exercises: LEO.variants.map(v => ({ id: v.id, sets: v.sets, reps: v.reps, rest: v.rest }))
+  });
+}
+
+/* ---------------- Estadísticas completas ---------------- */
+function weekStartKey(date) {
+  const d = new Date(date); d.setHours(0, 0, 0, 0);
+  const day = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - day);
+  return d.toISOString().slice(0, 10);
+}
+function computeStats() {
+  const now = new Date();
+  const volByWeek = [];
+  for (let w = 5; w >= 0; w--) {
+    const start = new Date(now); start.setDate(now.getDate() - (w * 7 + ((now.getDay() + 6) % 7)));
+    const key = weekStartKey(start);
+    const label = start.toISOString().slice(5, 10);
+    let kg = 0, n = 0;
+    sessions.forEach(s => {
+      if (weekStartKey(s.date) === key) {
+        n++;
+        (s.exercises || []).forEach(e => { kg += e.volumeKg || 0; });
+      }
+    });
+    volByWeek.push({ label, kg: Math.round(kg), n });
+  }
+  const since = new Date(now); since.setDate(now.getDate() - 28);
+  const volByMuscle = {};
+  sessions.forEach(s => {
+    if (new Date(s.date) < since) return;
+    (s.exercises || []).forEach(e => {
+      const k = targetEs(e.target || '') || 'Otro';
+      volByMuscle[k] = (volByMuscle[k] || 0) + (e.volumeKg || 0);
+    });
+  });
+  const muscleList = Object.keys(volByMuscle).map(k => ({ name: k, kg: Math.round(volByMuscle[k]) })).sort((a, b) => b.kg - a.kg);
+  const perEx = {};
+  sessions.forEach(s => {
+    (s.exercises || []).forEach(e => {
+      const ex = byId[e.id]; if (!ex) return;
+      const p = perEx[e.id] || (perEx[e.id] = { id: e.id, name: displayName(ex), count: 0, bestWeight: 0, bestWeightReps: 0, bestVol: 0, bestReps: 0, last: '' });
+      p.count++;
+      p.last = s.date;
+      (e.setsDetail || []).forEach(d => {
+        if (!d.done) return;
+        const w = parseNum(d.weight), r = parseInt(d.reps, 10) || 0;
+        if (w > p.bestWeight) { p.bestWeight = w; p.bestWeightReps = r; }
+        if (!w && r > p.bestReps) p.bestReps = r;
+      });
+      if ((e.volumeKg || 0) > p.bestVol) p.bestVol = Math.round(e.volumeKg || 0);
+    });
+  });
+  const records = Object.values(perEx).sort((a, b) => b.count - a.count).slice(0, 12);
+  const st = weekStats();
+  const firstW = weights[0], lastW = weights[weights.length - 1];
+  const firstWaist = measuresHistory.length ? measuresHistory[0].waist : null;
+  const lastWaist = measuresHistory.length ? measuresHistory[measuresHistory.length - 1].waist : null;
+  return { volByWeek, muscleList, records, streak: st.streak, sessionsTotal: sessions.length, firstW, lastW, firstWaist, lastWaist };
+}
+function renderStats() {
+  const el = document.getElementById('stats-body');
+  if (!el) return;
+  const s = computeStats();
+  const maxW = Math.max(1, ...s.volByWeek.map(w => w.kg));
+  const maxM = Math.max(1, ...s.muscleList.map(m => m.kg));
+  const wChange = (s.firstW && s.lastW) ? (s.lastW.weight - s.firstW.weight) : null;
+  const waistChange = (s.firstWaist && s.lastWaist) ? (parseFloat(s.lastWaist) - parseFloat(s.firstWaist)) : null;
+  el.innerHTML =
+    '<h1 class="display" style="font-size:34px;">Tus<br><span class="volt">números.</span></h1>' +
+    '<p class="lead">Todo gratis, sin límite de meses. Las calorías son una estimación; el volumen y los récords salen de lo que registras en cada sesión.</p>' +
+    '<div class="stat-grid">' +
+    '<div class="stat"><b class="volt">' + s.sessionsTotal + '</b><span>sesiones</span></div>' +
+    '<div class="stat"><b>' + s.streak + '</b><span>días seguidos</span></div>' +
+    '<div class="stat"><b>' + (s.lastW ? s.lastW.weight.toFixed(1) : '—') + '</b><span>kg actual</span></div></div>' +
+    '<h2 class="sec">Volumen por semana</h2>' +
+    '<div class="card"><p class="small muted">Kilos movidos en series con peso (peso corporal no suma kilos aquí; sus reps están en los récords).</p>' +
+    '<div class="bars" style="margin-top:10px;">' + s.volByWeek.map(w =>
+      '<div class="bar-col"><b>' + (w.kg ? (w.kg >= 1000 ? (w.kg / 1000).toFixed(1) + 't' : w.kg) : '—') + '</b><i class="' + (w.kg ? 'hot' : '') + '" style="height:' + Math.max(4, w.kg / maxW * 72) + 'px"></i><span>' + w.label + '</span></div>').join('') + '</div>' +
+    '<p class="small muted mt">' + s.volByWeek.map(w => w.n + ' sesiones').join(' · ') + ' en las últimas 6 semanas.</p></div>' +
+    '<h2 class="sec">Volumen por músculo · últimos 28 días</h2>' +
+    '<div class="card">' + (s.muscleList.length
+      ? s.muscleList.map(m => '<div style="margin-bottom:10px;"><div class="spread"><span style="font-size:13px;">' + esc(m.name) + '</span><b style="font-size:13px;">' + m.kg.toLocaleString('es-MX') + ' kg</b></div><div class="progress" style="margin:6px 0 0;"><i style="width:' + Math.max(3, Math.round(m.kg / maxM * 100)) + '%"></i></div></div>').join('')
+      : '<p class="muted small">Aún no hay volumen registrado con peso en los últimos 28 días. Completa una sesión marcando peso y reps.</p>') +
+    '<p class="small muted mt">Si un músculo queda muy atrás respecto a los demás, la próxima semana dale una serie más.</p></div>' +
+    '<h2 class="sec">Peso y cintura</h2>' +
+    '<div class="card"><p style="font-size:14px;">Peso: <b>' + (s.firstW ? s.firstW.weight.toFixed(1) + ' kg (' + s.firstW.date + ')' : '—') + ' → ' + (s.lastW ? s.lastW.weight.toFixed(1) + ' kg' : '—') + '</b>' +
+    (wChange === null ? '' : ' · cambio <b>' + (wChange > 0 ? '+' : '') + wChange.toFixed(1) + ' kg</b>') + '</p>' +
+    '<p style="font-size:14px;margin-top:8px;">Cintura: <b>' + (s.firstWaist ? s.firstWaist + ' cm' : '—') + ' → ' + (s.lastWaist ? s.lastWaist + ' cm' : '—') + '</b>' +
+    (waistChange === null ? '' : ' · cambio <b>' + (waistChange > 0 ? '+' : '') + waistChange.toFixed(1) + ' cm</b>') + '</p>' +
+    '<p class="small muted mt">En recomposición la cintura importa tanto como el peso: si la cintura baja aunque el peso no se mueva, estás ganando.</p>' +
+    '<button class="btn ghost block mt" onclick="go(\'measure\')">Ir a Medir →</button></div>' +
+    '<h2 class="sec">Tus récords</h2>' +
+    '<div class="card">' + (s.records.length
+      ? s.records.map(r => '<div style="padding:10px 0;border-bottom:1px solid var(--border);"><div class="spread"><b style="font-size:14px;">' + esc(r.name) + '</b><span class="small muted">' + r.count + (r.count === 1 ? ' sesión' : ' sesiones') + '</span></div>' +
+        '<p class="small muted" style="margin-top:4px;">' +
+        (r.bestWeight > 0 ? 'Peso máx.: <b style="color:#fff;">' + r.bestWeight + ' kg × ' + r.bestWeightReps + ' reps</b> · ' : '') +
+        (r.bestReps > 0 ? 'Más reps sin peso: <b style="color:#fff;">' + r.bestReps + '</b> · ' : '') +
+        (r.bestVol > 0 ? 'Volumen máx. en una sesión: <b style="color:#fff;">' + r.bestVol + ' kg</b>' : 'Sin peso registrado todavía') +
+        '</p></div>').join('')
+      : '<p class="muted small">Sin récords todavía. Completa tu primera sesión y aquí aparecerán tus marcas por ejercicio.</p>') + '</div>';
+}
+
+/* ---------------- Rutinas propias ---------------- */
+let editorState = null;
+function openCustomEditor(id) {
+  if (id) {
+    const c = customRoutines.find(x => x.id === id);
+    if (!c) return;
+    editorState = { id: c.id, title: c.title, mode: c.mode, exercises: c.exercises.map(e => ({ id: e.id, sets: e.sets, reps: e.reps, rest: e.rest })), q: '' };
+  } else {
+    editorState = { id: null, title: '', mode: mode, exercises: [], q: '' };
+  }
+  go('custom');
+}
+function renderCustomEditor() {
+  const el = document.getElementById('custom-body');
+  if (!el || !editorState) return;
+  const q = (editorState.q || '').trim().toLowerCase();
+  const pool = CURATED.map(c => byId[c.id]).filter(Boolean).filter(e => {
+    if (editorState.mode === 'casa' && !['body weight', 'dumbbell'].includes(e.equipment)) return false;
+    if (editorState.mode === 'calistenia' && e.equipment !== 'body weight') return false;
+    if (q && !(displayName(e).toLowerCase().includes(q) || e.name.toLowerCase().includes(q) || targetEs(e.target).toLowerCase().includes(q))) return false;
+    return true;
+  }).slice(0, 12);
+  el.innerHTML =
+    '<h1 class="display" style="font-size:34px;">' + (editorState.id ? 'Editar' : 'Crear') + '<br><span class="volt">mi rutina.</span></h1>' +
+    '<p class="lead">Sin límite de rutinas. Se guarda solo en tu teléfono.</p>' +
+    '<div class="card"><div class="field"><label>Nombre de la rutina</label>' +
+    '<input type="text" id="ce-title" placeholder="Ejemplo: Pecho y brazos en casa" value="' + esc(editorState.title) + '"></div>' +
+    '<div class="field"><label>Modo</label><div class="seg">' + Object.keys(MODES).map(k =>
+      '<button type="button" class="' + (editorState.mode === k ? 'on' : '') + '" onclick="editorState.mode=\'' + k + '\';renderCustomEditor();">' + MODES[k].icon + ' ' + MODES[k].name + '</button>').join('') + '</div></div></div>' +
+    '<h2 class="sec">Ejercicios (' + editorState.exercises.length + ')</h2>' +
+    (editorState.exercises.length ? editorState.exercises.map((e, i) => {
+      const ex = byId[e.id]; if (!ex) return '';
+      return '<div class="card"><div class="spread"><b style="font-size:14px;">' + esc(displayName(ex)) + '</b>' +
+        '<button class="btn ghost sm" onclick="customRemoveEx(' + i + ')">Quitar</button></div>' +
+        '<div class="row mt"><label class="small muted" style="flex:1;">Series <input type="number" min="1" max="8" value="' + e.sets + '" style="width:56px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px;text-align:center;" onchange="customSetField(' + i + ',\'sets\',this.value)"></label>' +
+        '<label class="small muted" style="flex:1;">Reps <input type="text" value="' + esc(e.reps) + '" style="width:64px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px;text-align:center;" onchange="customSetField(' + i + ',\'reps\',this.value)"></label>' +
+        '<label class="small muted" style="flex:1;">Descanso (s) <input type="number" min="15" max="300" step="15" value="' + e.rest + '" style="width:64px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px;text-align:center;" onchange="customSetField(' + i + ',\'rest\',this.value)"></label></div></div>';
+    }).join('') : '<p class="muted small">Aún no tiene ejercicios. Añade uno de la lista de abajo.</p>') +
+    '<h2 class="sec">Añadir ejercicio</h2>' +
+    '<div class="searchbar"><input type="search" placeholder="Buscar: flexiones, remo, sentadilla…" value="' + esc(editorState.q || '') + '" oninput="editorState.q=this.value;renderCustomEditor();const i=document.querySelector(\'#custom-body input[type=search]\');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}"></div>' +
+    pool.map(ex => '<button class="ex-row" onclick="customAddEx(\'' + ex.id + '\')"><img src="' + imgUrl(ex) + '" alt="" loading="lazy"><span><h4>' + esc(displayName(ex)) + '</h4><p>' + bodyEs(ex.body_part) + ' · ' + targetEs(ex.target) + ' · ' + equipEs(ex.equipment) + '</p></span><span class="go">+</span></button>').join('') +
+    '<button class="btn block big mt" onclick="customSave()">Guardar rutina</button>';
+}
+function customAddEx(id) {
+  const ex = byId[id]; if (!ex) return;
+  const c = curatedMap[id];
+  editorState.exercises.push({ id, sets: (c && c.sets) || 3, reps: (c && c.reps) || '10-12', rest: (c && c.rest_seconds) || 60 });
+  editorState.q = '';
+  renderCustomEditor();
+  toast(displayName(ex) + ' añadido');
+}
+function customRemoveEx(i) { editorState.exercises.splice(i, 1); renderCustomEditor(); }
+function customSetField(i, f, v) {
+  if (f === 'sets' || f === 'rest') editorState.exercises[i][f] = Math.max(1, parseInt(v, 10) || 3);
+  else editorState.exercises[i][f] = String(v || '10-12');
+}
+function customSave() {
+  const titleEl = document.getElementById('ce-title');
+  const title = (titleEl ? titleEl.value : editorState.title).trim();
+  if (!title) { toast('Ponle un nombre a tu rutina'); return; }
+  if (!editorState.exercises.length) { toast('Añade al menos un ejercicio'); return; }
+  const data = { id: editorState.id || ('mia-' + Date.now()), title, mode: editorState.mode, durationMin: 45, kcal: 300, exercises: editorState.exercises };
+  const idx = customRoutines.findIndex(x => x.id === data.id);
+  if (idx >= 0) customRoutines[idx] = data; else customRoutines.push(data);
+  saveCustomRoutines();
+  editorState = null;
+  toast('Rutina guardada: ' + title);
+  go('train');
+}
+function duplicateCustom(id) {
+  const c = customRoutines.find(x => x.id === id);
+  if (!c) return;
+  const copy = JSON.parse(JSON.stringify(c));
+  copy.id = 'mia-' + Date.now();
+  copy.title = c.title + ' (copia)';
+  customRoutines.push(copy);
+  saveCustomRoutines();
+  renderTrain();
+  toast('Duplicada: ' + copy.title);
+}
+function deleteCustom(id) {
+  const c = customRoutines.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm('¿Eliminar «' + c.title + '»? No se puede deshacer.')) return;
+  customRoutines = customRoutines.filter(x => x.id !== id);
+  saveCustomRoutines();
+  if (currentView === 'routine') go('train'); else renderTrain();
+  toast('Rutina eliminada');
 }
 
 /* ---------------- Generador ---------------- */
@@ -884,6 +1380,22 @@ function renderMeasure() {
   document.getElementById('measures-saved').textContent = measures
     ? 'Últimas medidas guardadas: ' + (measures.date || '') + ' · ' + MEASURE_FIELDS.filter(f => measures[f.key]).map(f => f.label.toLowerCase() + ' ' + measures[f.key] + ' cm').join(' · ') + '.'
     : '';
+  const waistEl = document.getElementById('waist-evolution');
+  if (waistEl) {
+    const hist = measuresHistory.filter(m => m.waist);
+    if (!hist.length) {
+      waistEl.innerHTML = '<p class="muted small">Aún no hay medidas de cintura guardadas. Anota tu cintura arriba (punto 3 de la figura) y aquí verás cómo cambia con el tiempo. En recomposición, que baje la cintura aunque el peso no se mueva es progreso real.</p>';
+    } else {
+      const vals = hist.map(m => parseFloat(m.waist));
+      const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+      const span = Math.max(1, max - min);
+      const change = vals.length > 1 ? (vals[vals.length - 1] - vals[0]) : 0;
+      waistEl.innerHTML = '<div class="bars">' + hist.slice(-10).map(m =>
+        '<div class="bar-col"><b>' + m.waist + '</b><i class="hot" style="height:' + Math.max(8, 14 + (parseFloat(m.waist) - min) / span * 58) + 'px"></i><span>' + esc((m.date || '').slice(5, 10)) + '</span></div>').join('') + '</div>' +
+        '<p class="small muted mt">Cintura: <b style="color:#fff;">' + vals[0] + ' cm → ' + vals[vals.length - 1] + ' cm</b>' +
+        (vals.length > 1 ? ' · cambio <b style="color:#fff;">' + (change > 0 ? '+' : '') + change.toFixed(1) + ' cm</b>' : ' · anota otra medida en unas semanas para ver el cambio') + '</p>';
+    }
+  }
 }
 function saveMeasures() {
   const data = { date: new Date().toISOString().slice(0, 10) };
@@ -896,6 +1408,10 @@ function saveMeasures() {
   if (!any) { toast('Escribe al menos una medida'); return; }
   measures = data;
   LS.set('measures', measures);
+  measuresHistory = measuresHistory.filter(m => m.date !== data.date);
+  measuresHistory.push(data);
+  measuresHistory.sort((a, b) => (a.date < b.date ? -1 : 1));
+  LS.set('measuresHistory', measuresHistory);
   renderMeasure();
   toast('Medidas guardadas');
 }
