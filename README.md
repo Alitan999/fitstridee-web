@@ -4,7 +4,7 @@ Web app estática de rutinas de gym, en casa y calistenia. Sin build, sin servid
 sin cuentas, sin anuncios y gratis. La misma lógica de datos y rutinas que la APK
 de Android (`~/workspace/fitstridee/app/`).
 
-## Qué incluye (web v1.1.0)
+## Qué incluye (web v1.1.1)
 
 - **Tres modos elegibles:** **Gym** (barra, polea, máquinas, mancuernas),
   **Casa** (peso corporal + 2 mancuernas; incluye la rutina mixta de Alan:
@@ -32,6 +32,13 @@ de Android (`~/workspace/fitstridee/app/`).
   las series al tope, subes peso (con mancuernas fijas o peso corporal,
   subes por reps); cada 4ª semana es descarga (menos series, mismo peso).
   La regla se muestra en cada ejercicio y en Seguir.
+- **Regla de días perdidos (nuevo v1.1.1):** si la última vez que entrenaste
+  un ejercicio fue hace 2 días o más, te quedas en el mismo lugar, pero la
+  meta baja 2 reps (pierdes las 2 que ibas a ganar y 2 más: hiciste 15, te
+  tocaban 17, faltaste días y tu siguiente meta es 13). El peso no sube y se
+  aplica una sola vez por hueco; al completar, la progresión normal retoma
+  desde ahí. La descarga de la 4ª semana va primero. En el programa de Leo
+  se muestra el aviso en la pantalla del programa.
 - **Estadísticas completas (nuevo v1.1.0):** vista "Tus números" con
   volumen por semana (últimas 6), volumen por músculo (últimos 28 días),
   racha, peso y cintura (con cambio desde el inicio) y lista de récords
@@ -111,7 +118,7 @@ También funciona abriendo `index.html` directamente en el navegador (los datos
 van en `data/data.js`, no por `fetch`, justo para eso). Sin internet se ve todo
 menos los GIF, que se cargan bajo demanda.
 
-Verificado 2026-11-22 (web v1.1.0): `node --check` de `app.js` y `data/data.js`
+Verificado 2026-11-24 (web v1.1.1): `node --check` de `app.js` y `data/data.js`
 OK; servidor local sirve los archivos con 200; probado en jsdom (Node) con
 31 comprobaciones — programa de Leo (14 días, reps exactas, día 1 marcado
 al completar las 3 variantes), rutinas propias (crear, ver, duplicar,
@@ -119,7 +126,11 @@ sustitución que crea copia), sustitución en sesión (6 opciones, cambio en
 1 toque), sesión con sugerencia prellenada y guardado con detalle
 (peso/reps/volumen por serie), estadísticas, evolución de la cintura y
 formato de duración ("45 min", "1 h 05 min" en vez de "00:45") — todas
-en verde y sin errores de página. El Chromium directo del sandbox no
+en verde y sin errores de página. Regla de días perdidos verificada
+2026-11-24 con 12 comprobaciones en Node (vm con stubs de DOM): hueco de
+3 días 12→10 reps, sin hueco 12→14 (progresión normal), ejemplo de Alan
+15→13, `leoGapInfo` con y sin hueco — todas en verde. El Chromium directo
+del sandbox no
 arranca (error "Hatch WebGL domain policy is required for browser
 startup"), así que la comprobación visual en navegador real queda
 pendiente para el agente principal. GIF de ejemplo

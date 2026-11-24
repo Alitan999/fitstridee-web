@@ -59,6 +59,32 @@ const LEO = {
 function leoDoneDays() { return Object.keys(leoState.days || {}).filter(d => leoState.days[d] && leoState.days[d].done).length; }
 function leoNextDay() { for (let d = 1; d <= LEO.totalDays; d++) { if (!leoState.days[d] || !leoState.days[d].done) return d; } return null; }
 function leoSave() { LS.set('leo', leoState); }
+/* Días de calendario entre una fecha (ISO o YYYY-MM-DD) y hoy (0 = hoy). */
+function daysSince(dateStr) {
+  if (!dateStr) return 0;
+  const p = String(dateStr).slice(0, 10).split('-');
+  if (p.length !== 3) return 0;
+  const then = new Date(+p[0], +p[1] - 1, +p[2]);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.round((today - then) / (24 * 60 * 60 * 1000)));
+}
+/* Regla de días perdidos en el programa de Leo: sigues en el mismo día,
+   pero la meta baja 2 reps (pierdes las 2 que ibas a ganar y 2 más).
+   Ejemplo con las normales de rodillas: de 12 a 10. Null si no hay hueco. */
+function leoGapInfo(next) {
+  if (!next) return null;
+  let lastDate = null;
+  Object.keys(leoState.days || {}).forEach(function (d) {
+    const st = leoState.days[d];
+    if (st && st.done && st.date && (!lastDate || st.date > lastDate)) lastDate = st.date;
+  });
+  if (!lastDate) return null;
+  const gap = daysSince(lastDate);
+  if (gap < 2) return null;
+  const last = lastPerformance('3211');
+  const achieved = !last ? 12 : (last.completedAll ? 12 : Math.max(1, Math.round(last.reps.reduce(function (a, b) { return a + b; }, 0) / Math.max(1, last.reps.length))));
+  return { days: gap, from: achieved, to: Math.max(1, achieved - 2) };
+}
 
 /* ---------------- Modos ---------------- */
 const MODES = {
@@ -301,6 +327,29 @@ function suggestionFor(ex, base) {
   const lastWeight = Math.max.apply(null, last.weights.concat([0]));
   const topReps = last.reps.length ? Math.min.apply(null, last.reps) : 0;
   const atTop = last.completedAll && topReps >= hi;
+  // Días perdidos (regla de Alan): si la última vez que entrenaste este
+  // ejercicio fue hace 2 días o más, te quedas en el mismo lugar, pero la
+  // meta baja 2: pierdes las 2 reps que ibas a ganar y 2 más. Ejemplo:
+  // hiciste 15, te tocaban 17, faltaste días y tu siguiente meta es 13.
+  // El peso no sube. Se aplica una sola vez por hueco: al completar una
+  // sesión, la fecha se actualiza y el hueco se cierra. La descarga de la
+  // 4ª semana va primero (se revisó arriba).
+  const gapDays = daysSince(last.date);
+  if (gapDays >= 2) {
+    const achieved = last.completedAll ? hi : Math.max(1, Math.round(last.reps.reduce(function (a, b) { return a + b; }, 0) / Math.max(1, last.reps.length)));
+    if (/s/i.test(String(base.reps || ''))) {
+      const target = Math.max(5, achieved - 5);
+      return {
+        reps: String(target), weight: '', sets: base.sets, deload: false,
+        text: 'Faltaste ' + gapDays + ' días: sigues en el mismo lugar, pero la meta bajó de ' + achieved + ' a ' + target + ' segundos para que te acomodes. Al completar, la progresión normal retoma desde ahí.'
+      };
+    }
+    const target = Math.max(1, achieved - 2);
+    return {
+      reps: String(target), weight: lastWeight > 0 ? String(lastWeight) : (ex.equipment === 'dumbbell' ? '7' : ''), sets: base.sets, deload: false,
+      text: 'Faltaste ' + gapDays + ' días: sigues en el mismo lugar, pero la meta bajó de ' + achieved + ' a ' + target + ' reps para que te acomodes. Al completar, la progresión normal retoma desde ahí.'
+    };
+  }
   if (atTop) {
     if (isFixed) {
       return {
@@ -989,6 +1038,7 @@ function renderLeo() {
   const el = document.getElementById('leo-body');
   if (!el) return;
   const done = leoDoneDays(), next = leoNextDay();
+  const gap = leoGapInfo(next);
   const variantRows = LEO.variants.map(v => {
     const ex = byId[v.id];
     return '<button class="ex-row" onclick="openExercise(\'' + v.id + '\')">' +
@@ -1009,6 +1059,7 @@ function renderLeo() {
     '<div class="card"><div class="spread"><h3>Tu avance</h3><span class="tag">' + done + '/14 días</span></div>' +
     '<div class="progress" style="margin-top:10px;"><i style="width:' + Math.round(done / 14 * 100) + '%"></i></div>' +
     '<p class="muted small mt">' + (next ? 'Te toca el día ' + next + '. Haz las 3 variantes de abajo y marca cada una al terminarla.' : '¡Completaste los 14 días! Ahora prueba las flexiones normales.') + '</p>' +
+    (gap ? '<p class="small mt">Faltaste ' + gap.days + ' días: sigues en el Día ' + next + ', pero la meta bajó de ' + gap.from + ' a ' + gap.to + ' reps para que te acomodes.</p>' : '') +
     (next ? '<button class="btn block big mt" onclick="startLeoDay(' + next + ')">Empezar el día ' + next + ' →</button>'
       : '<button class="btn block big mt" onclick="startSingle(\'0662\')">Probar flexiones normales →</button>') + '</div>' +
     '<h2 class="sec">Las 3 variantes (cada día)</h2>' +
